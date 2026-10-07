@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0e14">
+<title>STAR · Central</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2280%22 font-size=%2280%22>★</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e14;--p1:#121821;--p2:#19212d;--p3:#2a3240;--ln:#252f3f;--cy:#19e6ff;--cy2:#0e8fa3;--tx:#e9eff7;--mu:#8795a8;--ok:#2be29b;--wn:#ffb020;--bad:#ff4d5a;--hp:#a596f2;--f:"Chakra Petch","Sarabun",system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--tx);font:400 15px/1.45 var(--f)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+#app{max-width:560px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 14px calc(92px + env(safe-area-inset-bottom,0px))}
+.top{display:flex;align-items:center;gap:10px;padding:6px 2px 12px}
+.logo{font-weight:700;letter-spacing:.2em;font-size:20px}.logo i{font-style:normal;color:var(--cy);margin-right:6px}
+.grow{flex:1}
+.sync{font-size:12px;display:inline-flex;align-items:center;gap:6px;color:var(--mu)}
+.sync:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.sync.bad:before{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.mu{color:var(--mu)}
+.card{background:var(--p1);border:1px solid var(--ln);border-radius:6px;padding:14px;margin-bottom:14px}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.hd h2{margin:0;font-size:22px;font-weight:700;letter-spacing:.04em}
+.ck input{width:22px;height:22px;accent-color:var(--cy);margin:0;display:block}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);display:inline-block}.dot.off{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+.pill{font-size:12px;padding:2px 10px;border-radius:4px;border:1px solid;white-space:nowrap}
+.pill.g{color:var(--ok);border-color:rgba(43,226,155,.45);background:rgba(43,226,155,.08)}
+.pill.y{color:var(--wn);border-color:rgba(255,176,32,.45);background:rgba(255,176,32,.08)}
+.pill.r{color:var(--bad);border-color:rgba(255,77,90,.45);background:rgba(255,77,90,.08)}
+.pill.b{color:var(--cy);border-color:rgba(25,230,255,.4);background:rgba(25,230,255,.07)}
+.thumb{position:relative;background:#000;border:1px solid var(--ln);border-radius:4px;aspect-ratio:16/9;overflow:hidden;cursor:pointer;display:grid;place-items:center}
+.thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.thumb img[src=""],.thumb img:not([src]){visibility:hidden}
+.thumb.off{cursor:default;color:var(--mu);text-align:center;font-size:13px;padding:10px}
+.thumb .tag{position:absolute;left:8px;top:8px;background:rgba(10,14,20,.78);border:1px solid var(--ln);border-radius:4px;padding:2px 9px;font-size:13px;color:var(--cy)}
+.thumb .fps{position:absolute;right:8px;bottom:6px;font-size:12px;color:#fff;text-shadow:0 1px 3px #000}
+.thumb .lerr{position:absolute;inset:auto 0 0 0;background:rgba(255,77,90,.85);color:#fff;font-size:12px;padding:3px 8px;display:none}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);background:var(--bg);border-radius:4px;padding:10px 4px;margin:12px 0 4px;text-align:center}
+.stats b{display:block;font-size:15px;color:var(--ok);font-weight:700}.stats b.c{color:var(--cy)}.stats b.w{color:var(--tx)}.stats span{font-size:11px;color:var(--mu)}
+.last{display:flex;justify-content:space-between;font-size:13px;color:var(--mu);padding:10px 4px 12px}.last b{color:var(--tx);font-weight:500}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.b{display:flex;align-items:center;justify-content:center;gap:9px;min-height:46px;padding:8px 10px;border-radius:4px;border:1px solid transparent;background:var(--p3);font-weight:500;font-size:15px;transition:.15s}
+.b:active{transform:scale(.98)}.b.pri{background:var(--cy);color:#04141a;font-weight:700}
+.b.out{background:#0d1f27;border-color:var(--cy2);color:var(--cy)}.b.out.on{background:var(--cy);color:#04141a;font-weight:700}
+.b.red{background:#7d0014;border-color:#a3112a;color:#fff;grid-column:1/-1}.b.sm{min-height:0;padding:3px 11px;font-size:13px}
+.b[disabled]{opacity:.45}
+.i{width:18px;height:18px;flex:none}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px}
+.exp{background:none;border:0;color:var(--mu);padding:4px 2px;font-size:14px}
+.ar{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 2px;border-top:1px solid var(--ln);font-size:14px}
+.ar .nm{font-weight:600}.ar .sub{grid-column:1;color:var(--mu);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ar .ab{grid-row:1/3;grid-column:2;display:flex;gap:6px;align-items:center}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;margin-left:8px;font-weight:500}.st:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.WATCH{color:var(--ok)}.REJOIN{color:#ff9a3d}.HOP{color:var(--hp)}.COOLDOWN,.DEAD{color:var(--bad)}.NET{color:#ffd24a}.INIT,.OFF{color:var(--mu)}
+.add{width:100%;border:1px dashed var(--ln);background:none;border-radius:6px;padding:14px;color:var(--mu)}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--p1);border-top:1px solid var(--ln);display:flex;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));z-index:5}
+nav button{flex:1;background:none;border:0;color:var(--mu);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;padding:4px 0}
+nav button svg{width:26px;height:26px}nav button.on{color:var(--cy)}
+.bulk{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(74px + env(safe-area-inset-bottom,0px));width:min(540px,calc(100% - 20px));background:var(--p2);border:1px solid var(--cy2);border-radius:6px;padding:8px 10px;display:flex;gap:8px;align-items:center;z-index:6}
+.bulk span{flex:1;font-size:13px}
+h3{margin:0 0 10px;font-size:16px;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.kpi{background:var(--p1);border:1px solid var(--ln);border-radius:6px;padding:12px 8px;text-align:center}.kpi b{display:block;font-size:22px;color:var(--cy)}.kpi span{font-size:12px;color:var(--mu)}
+.spark{height:46px;width:100%;display:block}
+.row{display:flex;align-items:center;gap:10px;padding:12px 4px;border-top:1px solid var(--ln)}.row:first-of-type{border-top:0}
+.row .nm{font-weight:600;font-size:16px}.row .sub{font-size:12px;color:var(--mu)}.bar{height:4px;background:rgba(255,255,255,.08);border-radius:3px;margin-top:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--cy)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{position:relative;background:#000;border:1px solid var(--ln);border-radius:4px;aspect-ratio:9/16;overflow:hidden;cursor:pointer;display:grid;place-items:center}
+.tile img{width:100%;height:100%;object-fit:contain}.tile img:not([src]),.tile img[src=""]{visibility:hidden}
+.tile .tag{position:absolute;left:6px;top:6px;background:rgba(10,14,20,.8);border-radius:3px;padding:1px 8px;font-size:12px;color:var(--cy)}
+.tile .fps{position:absolute;right:6px;bottom:4px;font-size:11px;text-shadow:0 1px 3px #000}
+.tile .lerr{position:absolute;inset:auto 0 0 0;background:rgba(255,77,90,.85);font-size:11px;padding:2px 6px;display:none}
+.tile .ph{color:var(--mu);font-size:12px;text-align:center;padding:8px}
+label.f{display:block;font-size:13px;color:var(--mu);margin:12px 0 4px}
+input[type=text],input[type=password],input[type=number],textarea,select{width:100%;background:var(--bg);border:1px solid var(--ln);border-radius:4px;padding:10px 12px}
+textarea{min-height:130px;resize:vertical;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace}
+input[type=range]{width:100%;accent-color:var(--cy)}input[type=checkbox]{accent-color:var(--cy);width:18px;height:18px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg .b{min-height:0;padding:6px 14px;font-size:14px;flex:1}
+.fr{display:flex;gap:8px;align-items:center}.fr input{flex:1}
+.sw{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--ln);font-size:14px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px;min-width:420px}th{color:var(--mu);font-weight:500;text-align:left;padding:6px 6px}td{padding:8px 6px;border-top:1px solid var(--ln)}
+.log{height:260px;overflow:auto;background:var(--bg);border-radius:4px;padding:8px 10px;font:12px/1.6 ui-monospace,Menlo,Consolas,monospace}.log div{white-space:pre-wrap;word-break:break-word}.log .t,.log .dim{color:var(--mu)}.log .warn{color:#ff9a3d}.log .err{color:var(--bad)}.log .ok{color:var(--ok)}
+.ov{position:fixed;inset:0;background:rgba(4,7,11,.9);z-index:20;display:none;align-items:flex-end;justify-content:center}.ov.on{display:flex}
+.sheet{background:var(--p2);border:1px solid var(--ln);border-radius:10px 10px 0 0;width:min(560px,100%);max-height:92%;overflow:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet h2{margin:0 0 4px;font-size:20px}.sheet .r{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}.sheet .r .b{min-width:96px}
+#gate{align-items:center}#gate .sheet{border-radius:8px;width:min(420px,calc(100% - 28px))}
+#fs{align-items:stretch;flex-direction:column;padding:calc(10px + env(safe-area-inset-top,0px)) 10px calc(10px + env(safe-area-inset-bottom,0px));gap:8px}
+#fs .stage{flex:1;min-height:0;display:grid;place-items:center;background:#000;border:1px solid var(--ln)}
+#fs img{max-width:100%;max-height:100%;object-fit:contain;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
+#toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:8px;z-index:30;width:min(420px,calc(100% - 24px));pointer-events:none}
+.toast{background:var(--p2);border:1px solid var(--cy2);border-radius:6px;padding:10px 14px;font-size:14px;animation:in .2s}.toast.bad{border-color:var(--bad)}
+@keyframes in{from{opacity:0;transform:translateY(-6px)}}
+.empty{color:var(--mu);text-align:center;padding:26px 10px}
+@media(min-width:900px){#app{max-width:1100px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}.cards .card{margin:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="app"><div class="top"><div class="logo"><i>★</i>STAR <span class="mu" style="font-size:11px;letter-spacing:.14em">CENTRAL</span></div><div class="grow"></div><button class="b sm" id="gbtn" style="margin-right:10px">คู่มือ</button><span class="sync" id="sync">Synced</span></div><main id="view"></main></div>
+<div id="bulkbar"></div>
+<nav id="nav"></nav>
+<div class="ov" id="gate"><div class="sheet"><h2>STAR Remote</h2><div class="mu" style="font-size:13px">ใส่ token ของเครื่องนี้ (ดูได้ที่เมนู Remote Device บนเครื่อง)</div>
+<label class="f" for="tk">Token</label><input id="tk" type="password" autocomplete="off"><div class="r"><button class="b pri" id="login">เข้าสู่ระบบ</button></div><div class="bad" id="gerr" style="font-size:13px;margin-top:8px"></div></div></div>
+<div class="ov" id="sh"><div class="sheet" id="shc"></div></div>
+<div class="ov" id="fs"><div class="fr"><b id="fsn" style="font-size:18px"></b><span class="mu" id="fsm" style="font-size:12px"></span><span class="grow"></span><span class="mu" id="fsf" style="font-size:12px"></span><button class="b sm" id="fsx">ปิด</button></div>
+<div class="stage"><img id="fsimg" alt="หน้าจอเครื่อง"></div>
+<div class="fr" style="justify-content:center"><button class="b sm" data-key="BACK">Back</button><button class="b sm" data-key="HOME">Home</button><button class="b sm" data-key="APP_SWITCH">Recents</button></div>
+<div class="fr"><input id="fst" type="text" placeholder="พิมพ์ข้อความส่งเข้าเครื่อง"><button class="b sm" id="fss">ส่ง</button></div><div class="mu" style="font-size:12px;text-align:center">แตะ = คลิก · ลากบนภาพ = ปัด</div></div>
+<div id="toasts"></div>
+<template id="guideTpl"><style>
+.guide{font-size:14.5px;line-height:1.65}.guide h1{font-size:24px;margin:4px 0 6px;color:var(--cy)}.guide h2{font-size:19px;margin:30px 0 8px;padding-top:10px;border-top:1px solid var(--ln);color:var(--cy)}
+.guide h3{font-size:16px;margin:20px 0 6px}.guide p,.guide li{color:var(--tx)}.guide ol,.guide ul{padding-left:22px;margin:6px 0}.guide code{background:var(--bg);border:1px solid var(--ln);border-radius:3px;padding:0 5px;font:12.5px ui-monospace,Menlo,Consolas,monospace;color:#ffd24a}
+.guide .toc{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}.guide .toc a{border:1px solid var(--cy2);color:var(--cy);border-radius:4px;padding:3px 10px;font-size:13px;cursor:pointer;text-decoration:none}
+.guide .shot{margin:12px 0;background:#05080d;border:1px solid var(--ln);border-radius:6px;overflow:hidden}.guide .term{margin:0;padding:12px 14px;overflow-x:auto;white-space:pre;font:12px/1.4 ui-monospace,Menlo,Consolas,"Sarabun",monospace;color:#d6dde8}
+.guide figcaption{padding:6px 14px;background:var(--p2);color:var(--mu);font-size:12px}.guide .tip,.guide .warn{margin:10px 0;padding:8px 12px;border-radius:4px;border-left:3px solid var(--cy);background:rgba(25,230,255,.07)}.guide .warn{border-color:var(--wn);background:rgba(255,176,32,.08)}
+.guide .dia{width:100%;height:auto;background:var(--p1);border:1px solid var(--ln);border-radius:6px;margin:10px 0;display:block}.guide .tw{overflow-x:auto}.guide table{min-width:0;font-size:13px}.guide td b{color:var(--cy)}
+.guide .two{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:14px;align-items:start}@media(max-width:700px){.guide .two{grid-template-columns:1fr}}
+</style><div class="guide"><h1>คู่มือใช้งาน STAR</h1><p>อธิบายทุกเมนูและทุกฟังก์ชันของโปรแกรม พร้อมภาพหน้าจอจริงจากเมนูของโปรแกรม (ข้อมูลในภาพเป็นตัวอย่าง)</p><div class="toc"><a data-g="g-start">เริ่มเร็ว</a><a data-g="g-how">หลักการทำงาน</a><a data-g="g-add">[1] เพิ่มบัญชี</a><a data-g="g-acc">[2] บัญชี & แอป</a><a data-g="g-set">[3] Setting</a><a data-g="g-run">[4] START</a><a data-g="g-tools">[5] เครื่องมือเสริม</a><a data-g="g-web">รีโมตเว็บ</a><a data-g="g-central">เซิร์ฟกลาง</a><a data-g="g-faq">แก้ปัญหา</a></div><section id="g-start"><h2>เริ่มเร็ว 5 ขั้น</h2><ol><li>ติดตั้ง (Termux): <code>pkg install python</code> แล้ว <code>pip install requests</code></li>
+<li>เปิดโปรแกรม: <code>python Star.py</code> (ใช้ชื่อไฟล์ของคุณ) · เริ่มเฝ้าทันทีไม่ผ่านเมนู: <code>--auto</code> · เฝ้าบัญชีเดียว: <code>--only ชื่อบัญชี</code></li>
+<li>เมนู <b>[1]</b> เพิ่มบัญชี (Quick Login หรือ Cookie)</li>
+<li>เมนู <b>[2]</b> → <code>p</code> สแกนแอปโคลน → พิมพ์เลขบัญชี แล้วผูกแอป (1 บัญชี ต่อ 1 แอป) → <code>m</code> ตั้ง place id ของเกม</li>
+<li>เมนู <b>[4] START</b> → ดูตารางสถานะ · กด <code>q</code> หยุด</li></ol><figure class="shot"><pre class="term">
+<span style="color:rgb(14,116,220)">  ███████╗████████╗ █████╗ ██████╗</span>
+<span style="color:rgb(22,140,230)">  ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗</span>
+<span style="color:rgb(30,165,236)">  ███████╗   ██║   ███████║██████╔╝</span>
+<span style="color:rgb(40,190,242)">  ╚════██║   ██║   ██╔══██║██╔══██╗</span>
+<span style="color:rgb(64,212,248)">  ███████║   ██║   ██║  ██║██║  ██║</span>
+<span style="color:rgb(120,232,252)">  ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝</span>
+  Multi-Account Roblox Auto-Rejoin  <span style="color:rgb(64,196,255)">v5.5.0</span>
+
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">2/3 บัญชีเฝ้า · 2 แอป · แมพ 2/3</span>
+<span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">เมนู</span><span style="color:rgb(40,110,160)"> ─────────────────────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[1]</span> เพิ่มบัญชี<span style="color:rgb(128,136,148)"> ← Quick Login · Cookie</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[2]</span> บัญชี &amp; แอป<span style="color:rgb(128,136,148)"> ← แมพ·hop·เปิด/ปิดเฝ้า·แอป·logout</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[3]</span> Setting<span style="color:rgb(128,136,148)"> ← Hop·VIP·AFK·หาเซิร์ฟคนน้อย</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(64,196,255)">[4]</span> <span style="color:rgb(64,196,255)">START</span><span style="color:rgb(128,136,148)"> ← เริ่มเฝ้า · q หยุด</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[5]</span> เครื่องมือเสริม<span style="color:rgb(128,136,148)"> ← root·Delta·กราฟิก·boost·remote</span>
+<span style="color:rgb(40,110,160)">└── </span><span style="color:#ffffff">[0] ออก</span></pre><figcaption>ภาพ: เมนูหลักของโปรแกรม (ฟ้าคราม)</figcaption></figure><div class="tip">💡 ไม่มี root ก็เฝ้าได้ (ตรวจจากสถานะบน Roblox + เปิดเกมด้วย deep link) · มี root จะตรวจแอปตาย/ปิดแอปค้างได้แม่นขึ้น และใช้ AFK, กริด, ภาพสดได้</div></section><section id="g-how"><h2>หลักการทำงาน</h2><svg viewBox="0 0 660 200" role="img" aria-label="แผนภาพสถานะการ rejoin" class="dia">
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#4fe3f0"/></marker></defs>
+<g font-family="Chakra Petch,Sarabun,sans-serif" font-size="13" text-anchor="middle">
+<rect x="10" y="60" width="110" height="46" rx="6" fill="#0d2a1f" stroke="#5ee59a"/><text x="65" y="80" fill="#5ee59a" font-weight="700">WATCH</text><text x="65" y="97" fill="#8b95a5" font-size="11">อยู่ในเกม</text>
+<rect x="190" y="60" width="110" height="46" rx="6" fill="#2a1d0d" stroke="#ff9a3d"/><text x="245" y="80" fill="#ff9a3d" font-weight="700">REJOIN</text><text x="245" y="97" fill="#8b95a5" font-size="11">ลอง 3 รอบ</text>
+<rect x="370" y="60" width="110" height="46" rx="6" fill="#1f1a33" stroke="#a596f2"/><text x="425" y="80" fill="#a596f2" font-weight="700">HOP</text><text x="425" y="97" fill="#8b95a5" font-size="11">สลับเซิร์ฟ</text>
+<rect x="540" y="60" width="110" height="46" rx="6" fill="#2a0d12" stroke="#ff6b6b"/><text x="595" y="80" fill="#ff6b6b" font-weight="700">COOLDOWN</text><text x="595" y="97" fill="#8b95a5" font-size="11">พัก 30→300s</text>
+<path d="M120 83 H186" stroke="#4fe3f0" marker-end="url(#ar)" fill="none"/><text x="153" y="52" fill="#4fe3f0" font-size="11">หลุด 2 รอบติด</text>
+<path d="M300 83 H366" stroke="#4fe3f0" marker-end="url(#ar)" fill="none"/><text x="333" y="52" fill="#4fe3f0" font-size="11">ไม่เข้า</text>
+<path d="M480 83 H536" stroke="#4fe3f0" marker-end="url(#ar)" fill="none"/><text x="508" y="52" fill="#4fe3f0" font-size="11">ยังไม่เข้า</text>
+<path d="M595 106 V160 H65 V110" stroke="#5ee59a" stroke-dasharray="4 3" marker-end="url(#ar)" fill="none"/><text x="330" y="154" fill="#5ee59a" font-size="11">กลับเข้าเกมได้ทุกจุด → WATCH · พักจบแล้ววนใหม่ ไม่เลิก</text>
+<path d="M245 106 V135 H65" stroke="#5ee59a" stroke-dasharray="4 3" fill="none"/>
+<text x="330" y="188" fill="#8b95a5" font-size="11">DEAD = cookie ตาย · NET = เน็ตหลุด (รอเอง) · rejoin เกิน 4 ครั้ง/5 นาที = พัก 120 วิ กันลูป</text></g></svg><ul><li>ทุก <b>20 วินาที</b> (ปรับได้) โปรแกรมถาม Roblox ว่าบัญชีนั้นอยู่ในเกมไหม · ไม่อยู่ <b>2 รอบติด</b> ถึงเริ่ม rejoin (กัน API สะดุด)</li>
+<li><b>REJOIN</b> ลองสูงสุด 3 รอบ: รอบแรกเปิดเข้าเซิร์ฟเดิม · รอบต่อไปปิดแอปแล้วเปิดใหม่ · รอรอบละไม่เกิน 120 วินาที (เข้าได้ก็ไปต่อทันที)</li>
+<li>ไม่ติด → ถ้าเปิด <b>hop</b> ของบัญชีนั้น จะสลับเซิร์ฟ · ยังไม่ได้ → <b>COOLDOWN</b> พัก 30 วินาที เพิ่มเท่าตัวสูงสุด 300 แล้ววนใหม่ ไม่เลิก</li>
+<li>มี root: ถ้าแอปตายจริง (ไม่พบโปรเซส 3 ครั้งติด และพ้นช่วงเปิดแอป 90 วินาที) จะ rejoin ให้เอง</li></ul><div class='tw'><table><tr><th>สถานะ</th><th>ความหมาย</th></tr><tr><td><b>WATCH</b></td><td>อยู่ในเกม — เฝ้าปกติ</td></tr><tr><td><b>REJOIN</b></td><td>หลุดเกม กำลังกลับ (บอก ลอง n/3)</td></tr><tr><td><b>HOP</b></td><td>กำลังสลับเซิร์ฟ</td></tr><tr><td><b>COOLDOWN</b></td><td>กลับไม่ได้ พักก่อนวนใหม่</td></tr><tr><td><b>DEAD</b></td><td>cookie ตาย — เปลี่ยนที่ [2] → เลขบัญชี → [6]</td></tr><tr><td><b>NET</b></td><td>เน็ตหลุด รอเอง</td></tr><tr><td><b>INIT / OFF</b></td><td>เริ่มต้น / ถูกพัก</td></tr></table></div></section><section id="g-add"><h2>[1] เพิ่มบัญชี</h2><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">เพิ่มบัญชี</span><span style="color:rgb(40,110,160)"> ──────────────────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[1]</span> Quick Login<span style="color:rgb(128,136,148)"> ← ไม่ต้องใช้รหัสผ่าน</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[2]</span> Cookie<span style="color:rgb(128,136,148)"> ← วาง·ไฟล์·หลายไอดี</span>
+<span style="color:rgb(40,110,160)">└── </span>[?] เลือก (Enter ย้อนกลับ):</pre><figcaption>ภาพ: เมนูเพิ่มบัญชี</figcaption></figure><h3>[1] Quick Login (ไม่ต้องใช้รหัสผ่าน)</h3><p>โปรแกรมแสดงโค้ด → ในเครื่องที่ล็อกอินบัญชีนั้นอยู่ไปที่ Roblox → Settings → Quick Log In ใส่โค้ดแล้วยืนยัน · รอได้ 5 นาที · Ctrl+C ยกเลิก · เพิ่มหลายบัญชีต่อเนื่องได้</p>
+<h3>[2] Cookie</h3><ul><li><code>a</code> วางเดี่ยว — วาง cookie ที่ขึ้นต้น <code>_|WARNING:-DO-NOT-SHARE-THIS…</code></li><li><code>b</code> ไฟล์ใน Download — พิมพ์แค่ชื่อไฟล์ เช่น <code>tes.txt</code> (หรือ <code>tes</code>) โปรแกรมหาใน <code>/sdcard/Download/</code> ให้ · รูปแบบบรรทัดละ <code>ชื่อ|cookie</code> · ต้องสั่ง <code>termux-setup-storage</code> ก่อนหนึ่งครั้ง</li>
+<li><code>c</code> หลายไอดี — วางต่อกันได้หลายตัว</li><li><code>t</code> วิธีหา cookie</li></ul><div class="warn">⚠️ cookie คือกุญแจเข้าบัญชี ห้ามส่งให้ใคร · โปรแกรมเก็บในไฟล์ star_config.json (สิทธิ์เฉพาะเจ้าของ)</div></section><section id="g-acc"><h2>[2] บัญชี & แอป</h2><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">บัญชี &amp; แอป</span><span style="color:rgb(40,110,160)"> ───────────────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] <span style="color:#4fe3f0">Jayexe993</span> <span style="color:#5ee59a">ON</span> | place 920587237 | แอป #1 | <span style="color:rgb(128,136,148)">hop:off</span>
+<span style="color:rgb(40,110,160)">│   </span>[2] <span style="color:#4fe3f0">Bobby_02</span> <span style="color:#5ee59a">ON</span> | place 920587237 | แอป #2 | <span style="color:#e58cff">hop:ON</span><span style="color:#e58cff"> | VIP</span>
+<span style="color:rgb(40,110,160)">│   </span>[3] <span style="color:#4fe3f0">Nina_03</span> <span style="color:#8b95a5">OFF</span> | place - | <span style="color:rgb(128,136,148)">ไม่ผูกแอป</span> | <span style="color:rgb(128,136,148)">hop:off</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">แอป: #1 Roblox #1 · #2 Roblox #2</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[เลข]</span> จัดการบัญชีนั้น
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[a]</span> จัดการทั้งหมด<span style="color:rgb(128,136,148)"> ← เฝ้า·hop·แอป·place·cookie·ลบ</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[m]</span> แมพทุกบัญชี<span style="color:rgb(128,136,148)"> ← เพิ่ม/เปลี่ยน place ครั้งเดียว y/n</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[p]</span> แอป<span style="color:rgb(128,136,148)"> ← สแกน·เพิ่ม·แก้ชื่อ·ลบ</span>
+<span style="color:rgb(40,110,160)">└── </span>[?] เลือก (Enter กลับ):</pre><figcaption>ภาพ: หน้าบัญชี & แอป — รวมแอปและแมพไว้ที่เดียว</figcaption></figure><p>แถวบัญชีบอกสถานะเฝ้า (ON/OFF) · place id · แอปที่ผูก · hop · VIP · พิมพ์ <b>เลข</b> เพื่อจัดการบัญชีนั้น</p><figure class="shot"><pre class="term">
+<span style="color:rgb(40,110,160)">│   </span>▸ <span style="color:#4fe3f0">Jayexe993</span> | #1 Roblox #1 | hop off | place 920587237 | เฝ้า
+<span style="color:rgb(40,110,160)">│   </span>[1] ชื่อ [2] แอป [3] แมพ [4] hop [5] เปิด/ปิดเฝ้า [6] cookie
+<span style="color:rgb(40,110,160)">│   </span>[7] จอยเพื่อน [8] ทดสอบเปิดเกม [9] logout [d] ลบ [0] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: จัดการ 1 บัญชี</figcaption></figure><div class='tw'><table><tr><th>กด</th><th>ทำอะไร</th></tr><tr><td>1</td><td>ชื่อ — เปลี่ยนชื่อบัญชี (ห้ามซ้ำ)</td></tr><tr><td>2</td><td>แอป — ผูกกับแอปโคลน (1 บัญชี ต่อ 1 แอป ห้ามใช้แอปซ้ำกัน ไม่งั้นปิดทับกันจน rejoin วน)</td></tr><tr><td>3</td><td>แมพ — place id เกม · หาได้จากลิงก์เกมบน roblox.com: เลขหลัง <code>/games/</code></td></tr><tr><td>4</td><td>hop — เปิด/ปิดการสลับเซิร์ฟตอน rejoin ไม่ติด</td></tr><tr><td>5</td><td>เปิด/ปิดเฝ้า</td></tr><tr><td>6</td><td>cookie — เปลี่ยน cookie บัญชีนี้</td></tr><tr><td>7</td><td>จอยเพื่อน — ใส่ชื่อเพื่อน เข้าเซิร์ฟที่เพื่อนเล่นอยู่ (เพื่อนต้องไม่ซ่อนสถานะ)</td></tr><tr><td>8</td><td>ทดสอบเปิดเกม — สั่งเปิดตอนนี้เลย</td></tr><tr><td>9</td><td>logout — ปิด session ถาวร (ต้องพิมพ์ชื่อยืนยัน)</td></tr><tr><td>d</td><td>ลบบัญชีออกจาก config</td></tr></table></div><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">จัดการบัญชีทั้งหมด</span><span style="color:#ffffff"> (เลือกได้หลายตัว · a = ทั้งหมด)</span><span style="color:rgb(40,110,160)"> ───</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] <span style="color:#4fe3f0">Jayexe993</span> <span style="color:#5ee59a">ON</span> | place 920587237 | แอป #1 | <span style="color:rgb(128,136,148)">hop:off</span>
+<span style="color:rgb(40,110,160)">│   </span>[2] <span style="color:#4fe3f0">Bobby_02</span> <span style="color:#5ee59a">ON</span> | place 920587237 | แอป #2 | <span style="color:#e58cff">hop:ON</span><span style="color:#e58cff"> | VIP</span>
+<span style="color:rgb(40,110,160)">│   </span>[3] <span style="color:#4fe3f0">Nina_03</span> <span style="color:#8b95a5">OFF</span> | place - | <span style="color:rgb(128,136,148)">ไม่ผูกแอป</span> | <span style="color:rgb(128,136,148)">hop:off</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[1]</span> เปิด/ปิดเฝ้า
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[2]</span> hop ต่อบัญชี<span style="color:rgb(128,136,148)"> ← สลับเซิร์ฟตอน rejoin ไม่ติด</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[3]</span> ผูกแอป
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[4]</span> ตั้ง place
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[5]</span> ตรวจ cookie ทุกไอดี
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[6]</span> ลบบัญชี
+<span style="color:rgb(40,110,160)">└── </span>[?] เลือก (Enter กลับ):</pre><figcaption>ภาพ: จัดการทั้งหมด</figcaption></figure><p><code>a</code> ทำกับหลายบัญชีพร้อมกัน เลือกเลขหลายตัว หรือ <code>a</code> = ทั้งหมด: เปิด/ปิดเฝ้า · hop · ผูกแอป · ตั้ง place · ตรวจ cookie ทุกไอดี · ลบ (ต้องพิมพ์ DELETE)</p>
+<p><code>m</code> แมพทุกบัญชี — ใส่ place id ครั้งเดียว ถาม y/n แล้วตั้งให้ทุกบัญชี (ข้ามบัญชี VIP)</p><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">แอป</span><span style="color:#ffffff"> (Roblox / โคลน)</span><span style="color:rgb(40,110,160)"> ────────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(120,205,255)">[+]</span> #1 <span style="color:#4fe3f0">Roblox #1</span> — <span style="color:rgb(128,136,148)">com.roblox.clienv</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(120,205,255)">[+]</span> #2 <span style="color:#4fe3f0">Roblox #2</span> — <span style="color:rgb(128,136,148)">com.roblox.clienw</span>
+<span style="color:rgb(40,110,160)">│   </span>[a] สแกน  [b] เพิ่มเอง  [r] แก้ชื่อ  [d] ลบ (หลายตัว/a=ทั้งหมด)  [Enter] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: แอป: สแกน เพิ่ม แก้ชื่อ ลบ</figcaption></figure><p><code>a</code> สแกนหาแอป Roblox/โคลนในเครื่อง (ตั้งชื่ออัตโนมัติทั้งหมดได้) · <code>b</code> เพิ่มเองด้วยชื่อ package · <code>r</code> แก้ชื่อ · <code>d</code> ลบหลายตัวหรือ <code>a</code> = ทั้งหมด</p></section><section id="g-set"><h2>[3] Setting</h2><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">Setting</span><span style="color:rgb(40,110,160)"> ─────────────────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[1]</span> Hop Server<span style="color:rgb(128,136,148)"> ← ON ทุก 15 นาที · ตั้งเวลาได้</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[2]</span> เข้าเซิร์ฟ VIP<span style="color:rgb(128,136,148)"> ← วางลิงก์ทั้งก้อน · ตั้งไว้ 1 บัญชี</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[3]</span> AFK กันโดนเตะ<span style="color:rgb(128,136,148)"> ← ON ทุก 5 นาที</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[4]</span> Hop หาเซิร์ฟคนน้อย<span style="color:rgb(128,136,148)"> ← ON ≤3 คน</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[5]</span> ตั้งค่าอื่น ๆ<span style="color:rgb(128,136,148)"> ← webhook·รายงาน·ความถี่เช็ก·รีเฟรชแอป·backup</span>
+<span style="color:rgb(40,110,160)">└── </span>[?] เลือก (Enter กลับ):</pre><figcaption>ภาพ: เมนู Setting</figcaption></figure><h3>[1] Hop Server — สลับเซิร์ฟตามเวลา</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">Hop Server</span><span style="color:#ffffff"> (สลับเซิร์ฟเวอร์อัตโนมัติตามเวลา)</span><span style="color:rgb(40,110,160)"> ──────</span>
+<span style="color:rgb(40,110,160)">│   </span>สถานะ: <span style="color:rgb(64,196,255)">ON</span> · ทุก <span style="color:rgb(64,196,255)">15</span> นาที · แบบ สุ่ม
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">บัญชี VIP ไม่ถูก hop (VIP มีเซิร์ฟเดียว)</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] เปิด/ปิด   [2] ตั้งเวลา (นาที)   [3] เลือกแบบเซิร์ฟ   [Enter] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: ตั้งเวลา hop</figcaption></figure><p>เปิด/ปิด · ตั้งเวลาเป็นนาที (1–1440) · เลือกแบบ: สุ่ม / คนน้อยสุด / คนเยอะสุดที่ยังไม่เต็ม · บัญชี VIP ไม่ถูก hop</p><h3>[2] เข้าเซิร์ฟ VIP — วางลิงก์ทั้งก้อน</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">เข้าเซิร์ฟ VIP</span><span style="color:#ffffff"> (วางลิงก์ทั้งก้อน)</span><span style="color:rgb(40,110,160)"> ──────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] <span style="color:#4fe3f0">Jayexe993</span> <span style="color:#5ee59a">ON</span> | place 920587237 | แอป #1 | <span style="color:rgb(128,136,148)">hop:off</span>
+<span style="color:rgb(40,110,160)">│   </span>[2] <span style="color:#4fe3f0">Bobby_02</span> <span style="color:#5ee59a">ON</span> | place 920587237 | แอป #2 | <span style="color:#e58cff">hop:ON</span><span style="color:#e58cff"> | VIP</span>
+<span style="color:rgb(40,110,160)">│   </span>[3] <span style="color:#4fe3f0">Nina_03</span> <span style="color:#8b95a5">OFF</span> | place - | <span style="color:rgb(128,136,148)">ไม่ผูกแอป</span> | <span style="color:rgb(128,136,148)">hop:off</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">รองรับ …/games/ID/ชื่อ?privateServerLinkCode=… · roblox.com/share?code=…&amp;type=Server · roblox://…linkCode=…</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] ตั้ง/เปลี่ยนลิงก์ VIP   [2] ล้าง VIP (กลับเป็นเซิร์ฟสาธารณะ)   [Enter] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: ตั้งลิงก์ VIP</figcaption></figure><ol><li>กด <code>1</code> → เลือกบัญชี (เลข/หลายเลข/<code>a</code> = ทั้งหมด)</li><li>วางลิงก์ทั้งก้อน (มีข้อความอื่นปนอยู่ก็ได้) รองรับ <code>…/games/ID/ชื่อ?privateServerLinkCode=…</code>, <code>roblox://…linkCode=…</code> และลิงก์แชร์ <code>roblox.com/share?code=…&amp;type=Server</code></li>
+<li>โปรแกรมตั้ง place id ให้เอง · rejoin จะเข้าเซิร์ฟ VIP นั้นเสมอ · <code>2</code> ล้าง VIP กลับเป็นเซิร์ฟสาธารณะ</li></ol><div class="warn">⚠️ บัญชีต้องเข้าเซิร์ฟ VIP นั้นได้ (เป็นเจ้าของ หรือเคยกดลิงก์รับสิทธิ์แล้ว)</div><h3>[3] AFK กันโดนเตะ (ต้องมี root)</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">AFK กันโดนเตะ</span><span style="color:#ffffff"> (ขยับกล้องเบา ๆ ในเกมเป็นระยะ)</span><span style="color:rgb(40,110,160)"> ───</span>
+<span style="color:rgb(40,110,160)">│   </span>สถานะ: <span style="color:rgb(64,196,255)">ON</span> · ทุก <span style="color:rgb(64,196,255)">5</span> นาที
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">Roblox เตะคนที่ไม่ขยับนานราว 20 นาที — ตั้งให้ถี่กว่านั้น (แนะนำ 5) · ทำงานตอน START</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] เปิด/ปิด   [2] ตั้งทุกกี่นาที (1-15)   [3] ลองส่งตอนนี้   [Enter] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: ตั้ง AFK</figcaption></figure><p>Roblox เตะคนที่ไม่ขยับราว 20 นาที · โปรแกรมลากกล้องเบา ๆ ในหน้าต่างของแต่ละแอปทุก N นาที (1–15 แนะนำ 5) เฉพาะแอปที่อยู่ในเกม · <code>3</code> ลองส่งทันทีเพื่อเช็กว่าใช้ได้ · ทำงานระหว่าง START</p>
+<h3>[4] Hop หาเซิร์ฟคนน้อย</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">Hop หาเซิร์ฟคนน้อย</span><span style="color:#ffffff"> (hop จนกว่าจะเจอ)</span><span style="color:rgb(40,110,160)"> ───────────</span>
+<span style="color:rgb(40,110,160)">│   </span>สถานะ: <span style="color:rgb(64,196,255)">ON</span> · เซิร์ฟต้องมีคนไม่เกิน <span style="color:rgb(64,196,255)">3</span> คน
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">เข้าเกมแล้วถ้าเซิร์ฟมีคนเกินกำหนด จะ hop ต่อไปเรื่อย ๆ (สูงสุด 8 ครั้งต่อรอบ) จนเจอเซิร์ฟที่คนน้อย · ข้ามบัญชี VIP</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] เปิด/ปิด   [2] ตั้งจำนวนคนสูงสุด (1-20 · แนะนำ 3)   [Enter] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: ตั้ง Hop หาเซิร์ฟคนน้อย</figcaption></figure><p>เข้าเกมแล้วถ้าเซิร์ฟมีคนเกินที่ตั้ง (1–20 ค่าเริ่มต้น 3) จะ hop ต่อไปเรื่อย ๆ จนเจอเซิร์ฟที่คนน้อย · สูงสุด 8 ครั้งต่อรอบ ไม่เจอจะอยู่ที่เดิมแล้วลองใหม่ใน 5 นาที · ข้ามบัญชี VIP</p>
+<h3>[5] ตั้งค่าอื่น ๆ</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">ตั้งค่าอื่น ๆ</span><span style="color:rgb(40,110,160)"> ────────────────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span>webhook: <span style="color:rgb(128,136,148)">(ยังไม่ตั้ง)</span>
+<span style="color:rgb(40,110,160)">│   </span>รายงานทุก 60 นาที · เช็กทุก 20s · รีเฟรชแอปทุก ปิด นาที
+<span style="color:rgb(40,110,160)">│   </span>[1] webhook [2] ทดสอบ/ส่งรายงาน [3] รอบรายงาน [4] ความถี่เช็ก(วิ) [5] รีเฟรชแอปทุก N นาที(0=ปิด)
+<span style="color:rgb(40,110,160)">│   </span>[6] backup config [7] สถิติ [8] ล้างข้อมูลทั้งหมด [9] แนบภาพหน้าจอในรายงาน: off
+[?] เลือก:</pre><figcaption>ภาพ: ตั้งค่าอื่น ๆ</figcaption></figure><div class='tw'><table><tr><th>กด</th><th>ทำอะไร</th></tr><tr><td>1</td><td>webhook Discord — ส่งแจ้งเตือน/รายงาน</td></tr><tr><td>2</td><td>ทดสอบ/ส่งรายงานทันที</td></tr><tr><td>3</td><td>รอบรายงาน (นาที, 0=ปิด)</td></tr><tr><td>4</td><td>ความถี่เช็กสถานะ (10–120 วินาที)</td></tr><tr><td>5</td><td>รีเฟรชแอปทุก N นาที (0=ปิด) — ปิดแล้วเปิดใหม่เป็นรอบ กันค้าง</td></tr><tr><td>6</td><td>backup config เป็นไฟล์สำรอง</td></tr><tr><td>7</td><td>สถิติ rejoin/hop/alert</td></tr><tr><td>8</td><td>ล้างข้อมูลทั้งหมด (พิมพ์ RESET)</td></tr><tr><td>9</td><td>แนบภาพหน้าจอในรายงาน (ต้องมี root)</td></tr></table></div></section><section id="g-run"><h2>[4] START — หน้าเฝ้า</h2><figure class="shot"><pre class="term"><span style="color:rgb(56,189,248)"> ★ STAR</span><span style="color:rgb(64,196,255)"> v5.5.0</span>  01:06:26<span style="color:rgb(128,136,148)">  up 1h30m  root ✔</span>
+┌──────────────┬────────────┬───────┬─────────────┬──────┬─────┬───────┬─────────┬─────────────────┐
+│ <span style="color:#8b95a5">Account</span>      │ <span style="color:#8b95a5">Status</span>     │ <span style="color:#8b95a5">App</span>   │ <span style="color:#8b95a5">Place</span>       │ <span style="color:#8b95a5">RJ</span>   │ <span style="color:#8b95a5">HP</span>  │ <span style="color:#8b95a5">Stab</span>  │ <span style="color:#8b95a5">Up</span>      │ <span style="color:#8b95a5">Note</span>            │
+├──────────────┼────────────┼───────┼─────────────┼──────┼─────┼───────┼─────────┼─────────────────┤
+│ <span style="color:#4fe3f0">Jayexe993</span>    │ <span style="color:#5ee59a">● WATCH</span>    │ -     │ 920587237   │ 2    │ 0   │ 0%    │ 0m00s   │                 │
+│ <span style="color:#4fe3f0">Bobby_02</span>     │ <span style="color:#ffd24a">◐ REJOIN</span>   │ -     │ 920587237   │ 5    │ 1   │ 0%    │ 0m00s   │ <span style="color:rgb(128,136,148)">หลุดเกม · ลอง 2/</span> │
+│ <span style="color:#4fe3f0">Nina_03</span>      │ <span style="color:#ff6b6b">✖ DEAD</span>     │ -     │ -           │ 0    │ 0   │ 0%    │ 0m00s   │ <span style="color:rgb(128,136,148)">cookie ตาย</span>      │
+└──────────────┴────────────┴───────┴─────────────┴──────┴─────┴───────┴─────────┴─────────────────┘
+<span style="color:rgb(64,196,255)">─ Log </span><span style="color:rgb(128,136,148)">──────────────────────────────────────────────────────────────────────────────────────────────</span>
+<span style="color:rgb(64,196,255)"> 0 rejoin · 0 hop · 0 alert · 1/3 ในเกม</span><span style="color:rgb(128,136,148)">   q หยุด · f บังคับ rejoin</span></pre><figcaption>ภาพ: ตารางสถานะระหว่างเฝ้า (ตัวอย่าง)</figcaption></figure><ul><li>คอลัมน์: <b>Account</b> ชื่อ · <b>Status</b> สถานะ · <b>App</b> แอปที่ผูก · <b>Place</b> · <b>RJ</b> จำนวน rejoin · <b>HP</b> จำนวน hop · <b>Stab</b> % เวลาที่อยู่ในเกม · <b>Up</b> อยู่ในเกมมานาน · <b>Note</b> หมายเหตุ</li>
+<li>กด <code>q</code> หยุดเฝ้า · กด <code>f</code> บังคับ rejoin ทุกบัญชี · สร้างไฟล์ <code>STOP</code> ข้างสคริปต์ก็หยุดได้</li>
+<li>เจอบัญชีไม่มีแมพ/แอปซ้ำกัน โปรแกรมเตือนก่อนเริ่ม · ตัวแอปป้องกัน (App Guard) เปิดแอปกลับให้เมื่อแอปหลุด</li></ul></section><section id="g-tools"><h2>[5] เครื่องมือเสริม</h2><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">เครื่องมือเสริม</span><span style="color:rgb(40,110,160)"> ─────────────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[1]</span> ROOT ฉีด cookie<span style="color:rgb(128,136,148)"> ← หมุนเวียนหลายแอป</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[2]</span> Delta AutoExec<span style="color:rgb(128,136,148)"> ← สคริปต์·FPS boost</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[3]</span> ลดกราฟิก<span style="color:rgb(128,136,148)"> ← ลดจอ·ล้างแคช</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[4]</span> Phone Boost<span style="color:rgb(128,136,148)"> ← ล้างแรม·กันตาย</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[5]</span> เปิดแอป · App Guard<span style="color:rgb(128,136,148)"> ← หลุดเด้งเปิดใหม่</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[6]</span> แยกจอ (tmux)<span style="color:rgb(128,136,148)"> ← 1 บัญชีต่อ 1 ช่อง</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[7]</span> Remote Device<span style="color:rgb(128,136,148)"> ← เว็บแดชบอร์ด·คุมหลายเครื่อง</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:#4fe3f0">[8]</span> AutoGrid<span style="color:rgb(128,136,148)"> ← จัดหน้าต่างโคลนเป็นกริดอัตโนมัติ</span>
+<span style="color:rgb(40,110,160)">└── </span>[?] เลือก (Enter ย้อนกลับ):</pre><figcaption>ภาพ: เครื่องมือเสริม</figcaption></figure><h3>1 · ROOT ฉีด cookie</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">ROOT</span><span style="color:#ffffff"> (Injector)</span><span style="color:rgb(40,110,160)"> ────────────────────────────</span>
+<span style="color:#5ee59a">[+]</span> <span style="color:#5ee59a">root พร้อม ✔</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] สแกนจุดเก็บ cookie   [2] ฉีด cookie   [3] ดูแผนที่   [0] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: ROOT Injector</figcaption></figure><p>ใช้ root เขียน cookie ของแต่ละบัญชีลงที่เก็บของแอปโคลน (ผูกบัญชี↔แอปให้เอง) แล้วเปิดแอปใหม่ — แต่ละแอปล็อกอินเป็นบัญชีนั้นโดยไม่ต้องกรอกเอง · <code>1</code> สแกนจุดเก็บ cookie · <code>2</code> ฉีด · <code>3</code> ดูแผนที่ที่จับคู่ไว้</p><h3>2 · Delta AutoExec</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">Delta AutoExec</span><span style="color:#ffffff"> (ยังไม่พบโฟลเดอร์)</span><span style="color:rgb(40,110,160)"> ─────────────</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] ตั้งโฟลเดอร์เอง [2] รายการสคริปต์ [3] วางโค้ด [4] จาก URL (loadstring) [5] จากไฟล์
+<span style="color:rgb(40,110,160)">│   </span>[6] FPS Lite (ลดกราฟิกปลอดภัย) [7] FPS Extreme (ลบภูเขา/เท็กซ์เจอร์)
+<span style="color:rgb(40,110,160)">│   </span>[f] ติดตั้งตัวโชว์ FPS มุมจอ (ลากย้ายได้)
+<span style="color:rgb(40,110,160)">│   </span>[8] ลบสคริปต์ (หลายไฟล์/a) [9] ลบทั้งหมด [0] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: Delta AutoExec</figcaption></figure><p>จัดสคริปต์ที่ Delta รันอัตโนมัติ: ตั้งโฟลเดอร์ · ดูรายการ · วางโค้ด · จาก URL (loadstring) · จากไฟล์ · <b>FPS Lite</b> ลดกราฟิกแบบปลอดภัย · <b>FPS Extreme</b> ลบภูเขา/เท็กซ์เจอร์ · <code>f</code> ตัวโชว์ FPS มุมจอ · ลบหลายไฟล์</p><h3>3 · ลดกราฟิก</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">ลดกราฟิก / ประหยัดแรม</span><span style="color:rgb(40,110,160)"> ─────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] ลดความละเอียดจอ (เบาแรม+GPU มาก) [2] คืนความละเอียดเดิม
+<span style="color:rgb(40,110,160)">│   </span>[3] ปิดแอนิเมชันระบบ [4] ล้างแคชแอป Roblox [5] ติดตั้ง FPS Lite/Extreme (ไป Delta)
+[?] เลือก:</pre><figcaption>ภาพ: ลดกราฟิก / ประหยัดแรม</figcaption></figure><p>ลดความละเอียดจอ (เบาแรม+GPU มาก) และคืนค่าเดิม · ปิดแอนิเมชันระบบ · ล้างแคชแอป Roblox · ทางลัดไปติดตั้ง FPS Lite/Extreme · ถ้าจอเพี้ยน: <code>wm size reset; wm density reset</code></p><h3>4 · Phone Boost</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">Phone / Cloudphone Boost</span><span style="color:#ffffff"> (RAM ว่าง 3782 / 3999 MB)</span><span style="color:rgb(40,110,160)"> ──</span>
+<span style="color:rgb(40,110,160)">│   </span>root: พร้อม · wake-lock: ON · auto-trim: 10 นาที
+<span style="color:rgb(40,110,160)">│   </span>[1] ล้างแรมเบา (แคช)   [2] ล้างแรมแรง (ปิดแอปพื้นหลังที่ไม่ใช่ Roblox/Termux)
+<span style="color:rgb(40,110,160)">│   </span>[3] กัน Termux+Roblox ไม่ให้ถูกฆ่า (ปิด phantom killer + whitelist แบต)
+<span style="color:rgb(40,110,160)">│   </span>[4] เปิด/ปิด wake-lock   [5] ตั้งรอบ auto-trim (0=ปิด)
+<span style="color:rgb(40,110,160)">│   </span>[6] สร้าง star_run.sh (ดับแล้วเปิดใหม่เอง)
+<span style="color:rgb(40,110,160)">│   </span>[7] จัดจอโคลนเป็นกริด + ล็อกไว้ไม่ให้ขยับ (ต้องมี root)   [0] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: Phone / Cloudphone Boost</figcaption></figure><p>ล้างแรมเบา/แรง (ปิดแอปพื้นหลังที่ไม่ใช่ Roblox/Termux) · กัน Termux+Roblox ไม่ให้ Android ฆ่า · wake-lock · ตั้งรอบ auto-trim · สร้าง <code>star_run.sh</code> (ดับแล้วเปิดใหม่เอง) · <code>7</code> จัดจอโคลนเป็นกริดแล้วล็อกไม่ให้ขยับ</p><h3>5 · เปิดแอป · App Guard</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">เปิดแอป / App Guard</span><span style="color:#ffffff"> (guard ON · เช็กทุก 15s)</span><span style="color:rgb(40,110,160)"> ──</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(120,205,255)">[+]</span> #1 <span style="color:#4fe3f0">Roblox #1</span> — <span style="color:#5ee59a">รันอยู่</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(120,205,255)">[+]</span> #2 <span style="color:#4fe3f0">Roblox #2</span> — <span style="color:#5ee59a">รันอยู่</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] เปิดทุกแอป  [2] เปิดเฉพาะบางแอป  [3] เปิด/ปิด Guard  [4] ความถี่เช็ก Guard  [0] กลับ
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">Guard = แอปหลุด/เด้ง/ถูกฆ่า → เปิดกลับเข้าเกมให้เองระหว่าง START</span>
+[?] เลือก:</pre><figcaption>ภาพ: เปิดแอป / App Guard</figcaption></figure><p>เปิดทุกแอปหรือเฉพาะบางแอป · <b>Guard</b> เปิดแอปกลับเข้าเกมให้เองเมื่อหลุด/เด้ง/ถูกฆ่าระหว่าง START · ตั้งความถี่เช็ก 8–120 วินาที</p><h3>6 · แยกจอ (tmux)</h3><p>1 บัญชีต่อ 1 ช่อง ใช้ดูหลายบัญชีพร้อมกันเป็นช่อง ๆ · ต้องติดตั้ง <code>pkg install tmux</code> ก่อน</p><h3>7 · Remote Device</h3><p>ดูหัวข้อ “รีโมตเว็บ” ด้านล่าง · เข้าเมนูนี้ต้องใส่รหัสผ่าน</p><h3>8 · AutoGrid</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">AutoGrid</span><span style="color:#ffffff"> (จัดหน้าต่างโคลนเป็นกริดอัตโนมัติ)</span><span style="color:rgb(40,110,160)"> ────────</span>
+<span style="color:rgb(40,110,160)">│   </span>สถานะ: <span style="color:#ff6b6b">หยุด</span> · pattern roblox · คอลัมน์ auto · ตรวจทุก 3 วิ · margin 0
+<span style="color:rgb(40,110,160)">│   </span>[1] เริ่ม/เริ่มใหม่   [2] หยุด   [3] ตั้งค่า   [Enter] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: AutoGrid</figcaption></figure><p>จัดหน้าต่างโคลนเป็นกริดให้เองทุกครั้งที่จำนวนหน้าต่างเปลี่ยน (ต้องมี root) · ตั้ง pattern ชื่อแอป · คอลัมน์ (0=auto) · ตรวจทุกกี่วินาที · margin · ใช้ทีละแบบกับกริดแบบล็อก (เปิดอันหนึ่งอีกอันหยุดให้)</p></section><section id="g-web"><h2>รีโมตเว็บ (หน้านี้)</h2><svg viewBox="0 0 660 230" role="img" aria-label="ผังการเชื่อมต่อรีโมตและเซิร์ฟกลาง" class="dia">
+<defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#4fe3f0"/></marker></defs>
+<g font-family="Chakra Petch,Sarabun,sans-serif" font-size="12" text-anchor="middle">
+<rect x="10" y="20" width="150" height="56" rx="6" fill="#121821" stroke="#19e6ff"/><text x="85" y="44" fill="#e9eff7" font-weight="700">มือถือ/คอม ของคุณ</text><text x="85" y="62" fill="#8b95a5" font-size="11">เบราว์เซอร์ → หน้าเว็บรีโมต</text>
+<rect x="10" y="140" width="150" height="56" rx="6" fill="#121821" stroke="#ffd24a"/><text x="85" y="164" fill="#ffd24a" font-weight="700">star_central.html</text><text x="85" y="182" fill="#8b95a5" font-size="11">เซิร์ฟกลาง (ไฟล์เดียว)</text>
+<rect x="250" y="80" width="120" height="70" rx="6" fill="#0d1f27" stroke="#0e8fa3"/><text x="310" y="108" fill="#4fe3f0" font-weight="700">ลิงก์ https</text><text x="310" y="126" fill="#8b95a5" font-size="11">อุโมงค์ / LAN / Tailscale</text>
+<rect x="470" y="10" width="180" height="56" rx="6" fill="#121821" stroke="#5ee59a"/><text x="560" y="34" fill="#5ee59a" font-weight="700">เครื่องลูก 1 (STAR)</text><text x="560" y="52" fill="#8b95a5" font-size="11">เปิด Remote [1] · มี token</text>
+<rect x="470" y="86" width="180" height="56" rx="6" fill="#121821" stroke="#5ee59a"/><text x="560" y="110" fill="#5ee59a" font-weight="700">เครื่องลูก 2 (STAR)</text><text x="560" y="128" fill="#8b95a5" font-size="11">เปิด Remote [1] · มี token</text>
+<rect x="470" y="162" width="180" height="56" rx="6" fill="#121821" stroke="#5ee59a"/><text x="560" y="186" fill="#5ee59a" font-weight="700">เครื่องลูก N (STAR)</text><text x="560" y="204" fill="#8b95a5" font-size="11">ใช้ลิงก์ของตัวเองได้เลย</text>
+<path d="M160 48 H300 V80" stroke="#4fe3f0" fill="none" marker-end="url(#a2)"/><path d="M160 168 H300 V150" stroke="#ffd24a" fill="none" marker-end="url(#a2)"/>
+<path d="M370 100 L466 40" stroke="#4fe3f0" fill="none" marker-end="url(#a2)"/><path d="M370 115 H466" stroke="#4fe3f0" fill="none" marker-end="url(#a2)"/><path d="M370 130 L466 188" stroke="#4fe3f0" fill="none" marker-end="url(#a2)"/>
+</g></svg><h3>เปิดใช้งานบนเครื่องลูก</h3><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">Remote Device</span><span style="color:#ffffff"> (แดชบอร์ดคุมหลายเครื่อง)</span><span style="color:rgb(40,110,160)"> ─────────</span>
+<span style="color:rgb(40,110,160)">│   </span>สถานะ: <span style="color:#ff6b6b">ปิด</span> · พอร์ต 8787 · ชื่อ MINI
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">ทั่วโลก: ปิด</span>
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(64,196,255)">[1] เปิด/ปิด Remote</span>   <span style="color:rgb(64,196,255)">[2] ลิงก์ทั่วโลก (กดซ้ำ = ปิด)</span>
+<span style="color:rgb(40,110,160)">│   </span>[3] เครื่องลูก (1)   [4] ตั้งค่า   [h] Hub อย่างเดียว
+[?] เลือก (Enter กลับ):</pre><figcaption>ภาพ: เมนู Remote Device (ต้องใส่รหัสผ่านก่อนเข้า)</figcaption></figure><ol><li><b>[5] เครื่องมือเสริม → [7] Remote Device</b> → ใส่รหัสผ่าน → <code>1</code> เปิด Remote (มี root จะส่งภาพสดให้เลย)</li><li>จะได้ที่อยู่ LAN และ <b>Token</b> — เปิดจากเครื่องในวง wifi เดียวกันด้วย <code>http://IP:8787</code> แล้วใส่ token</li>
+<li><code>2</code> ลิงก์ทั่วโลก — เปิดจากที่ไหนก็ได้ · ลิงก์อยู่ต่อแม้ปิดสคริปต์ จนกว่าคุณกดปิดเอง · ลิงก์สุ่มจะเปลี่ยนเมื่อเครื่องรีบูต → ใช้แบบถาวรได้ (ตั้งค่า → ตัวทำอุโมงค์ → Cloudflare/ngrok)</li></ol><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">ตั้งค่า Remote</span><span style="color:rgb(40,110,160)"> ─────────────────────────────</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] ตัวทำอุโมงค์: <span style="color:rgb(90,220,220)">Cloudflare ลิงก์สุ่ม</span>
+<span style="color:rgb(40,110,160)">│   </span>[2] ตั้งลิงก์ถาวร<span style="color:rgb(128,136,148)">  (ใช้ได้เมื่อเลือก Cloudflare ถาวร / ngrok ถาวร ที่ [1])</span>
+<span style="color:rgb(40,110,160)">│   </span>[3] token ใหม่   [4] พอร์ต: 8787   [5] ชื่อเครื่อง: MINI
+<span style="color:rgb(40,110,160)">│   </span>[6] โหมดดูอย่างเดียว: off   [7] ภาพสด/คุมจอ: off
+<span style="color:rgb(40,110,160)">│   </span><span style="color:rgb(128,136,148)">ลิงก์ทั่วโลกเป็น HTTPS ผ่านอุโมงค์ · ป้องกันด้วย token + ล็อกเมื่อเดาผิดบ่อย · ปลอดภัยสุด = เปิด [6]</span>
+[?] เลือก (Enter กลับ):</pre><figcaption>ภาพ: ตั้งค่า Remote</figcaption></figure><figure class="shot"><pre class="term"><span style="color:rgb(40,110,160)">├── </span><span style="color:rgb(64,196,255)">เครื่องลูก</span><span style="color:#ffffff"> (เครื่องอื่นที่ดูผ่านแดชบอร์ดนี้)</span><span style="color:rgb(40,110,160)"> ─────────────</span>
+<span style="color:rgb(40,110,160)">│   </span>1. Phone-02 <span style="color:rgb(128,136,148)">· 192.168.1.50:8787</span>
+<span style="color:rgb(40,110,160)">│   </span>[1] เพิ่มเครื่อง  [2] ลบเครื่อง (หลายตัว/a=ทั้งหมด)  [Enter] กลับ
+[?] เลือก:</pre><figcaption>ภาพ: เครื่องลูก — เพิ่มเครื่องอื่นเข้าแดชบอร์ด</figcaption></figure><h3>หน้า Dashboard — การ์ดเครื่อง</h3><div class='two'><svg viewBox="0 0 330 330" role="img" aria-label="การ์ดเครื่องในแดชบอร์ด พร้อมหมายเลขปุ่ม" class="dia" style="max-width:340px">
+<g font-family="Chakra Petch,Sarabun,sans-serif" font-size="12">
+<rect x="4" y="4" width="322" height="322" rx="8" fill="#121821" stroke="#252f3f"/>
+<rect x="14" y="14" width="14" height="14" rx="2" fill="none" stroke="#19e6ff"/><circle cx="40" cy="21" r="4" fill="#2be29b"/><text x="52" y="26" fill="#e9eff7" font-size="16" font-weight="700">MINI</text>
+<rect x="196" y="12" width="62" height="18" rx="3" fill="none" stroke="#2be29b"/><text x="227" y="25" fill="#2be29b" text-anchor="middle" font-size="10">Tool running</text>
+<rect x="264" y="12" width="52" height="18" rx="3" fill="none" stroke="#19e6ff"/><text x="290" y="25" fill="#19e6ff" text-anchor="middle" font-size="10">Online</text>
+<rect x="14" y="40" width="302" height="84" rx="4" fill="#000" stroke="#252f3f"/><text x="165" y="86" fill="#8b95a5" text-anchor="middle">ภาพสดหน้าจอ (FPS)</text>
+<circle cx="24" cy="50" r="8" fill="#19e6ff"/><text x="24" y="54" fill="#04141a" text-anchor="middle" font-weight="700" font-size="10">A</text>
+<rect x="14" y="130" width="302" height="30" rx="4" fill="#0a0e14"/><text x="38" y="150" fill="#19e6ff">9m57s</text><text x="108" y="150" fill="#2be29b">7</text><text x="170" y="150" fill="#e9eff7">0</text><text x="228" y="150" fill="#19e6ff">7</text><text x="288" y="150" fill="#e9eff7">0</text>
+<circle cx="24" cy="140" r="8" fill="#19e6ff"/><text x="24" y="144" fill="#04141a" text-anchor="middle" font-weight="700" font-size="10">B</text>
+<g text-anchor="middle" font-size="12">
+<rect x="14" y="170" width="148" height="30" rx="4" fill="#19e6ff"/><text x="88" y="190" fill="#04141a" font-weight="700">Start tool</text>
+<rect x="168" y="170" width="148" height="30" rx="4" fill="#2a3240"/><text x="242" y="190" fill="#e9eff7">Stop tool</text>
+<rect x="14" y="206" width="148" height="30" rx="4" fill="#2a3240"/><text x="88" y="226" fill="#e9eff7">Rejoin all</text>
+<rect x="168" y="206" width="148" height="30" rx="4" fill="#2a3240"/><text x="242" y="226" fill="#e9eff7">Add cookies</text>
+<rect x="14" y="242" width="148" height="30" rx="4" fill="#0d1f27" stroke="#0e8fa3"/><text x="88" y="262" fill="#19e6ff">Flush Cache</text>
+<rect x="168" y="242" width="148" height="30" rx="4" fill="#0d1f27" stroke="#0e8fa3"/><text x="242" y="262" fill="#19e6ff">Safe Mode</text>
+<rect x="14" y="278" width="148" height="30" rx="4" fill="#0d1f27" stroke="#0e8fa3"/><text x="88" y="298" fill="#19e6ff">Dump Logs</text>
+<rect x="168" y="278" width="148" height="30" rx="4" fill="#0d1f27" stroke="#0e8fa3"/><text x="242" y="298" fill="#19e6ff">Proxy Switch</text></g>
+<g font-size="10" font-weight="700" text-anchor="middle" fill="#04141a">
+<circle cx="14" cy="170" r="8" fill="#ffd24a"/><text x="14" y="174">1</text><circle cx="168" cy="170" r="8" fill="#ffd24a"/><text x="168" y="174">2</text>
+<circle cx="14" cy="206" r="8" fill="#ffd24a"/><text x="14" y="210">3</text><circle cx="168" cy="206" r="8" fill="#ffd24a"/><text x="168" y="210">4</text>
+<circle cx="14" cy="242" r="8" fill="#ffd24a"/><text x="14" y="246">5</text><circle cx="168" cy="242" r="8" fill="#ffd24a"/><text x="168" y="246">6</text>
+<circle cx="14" cy="278" r="8" fill="#ffd24a"/><text x="14" y="282">7</text><circle cx="168" cy="278" r="8" fill="#ffd24a"/><text x="168" y="282">8</text></g>
+<text x="165" y="322" fill="#8b95a5" text-anchor="middle" font-size="10">9 = Reboot (ปุ่มแดงล่างสุดของการ์ดจริง)</text></g></svg><div><p><b>A</b> ภาพสดหน้าจอ แตะเพื่อเปิดเต็มจอและแตะ/ปัดควบคุมได้ · <b>B</b> สถิติ: Active เวลาเฝ้า · Online ในเกม · Offline · Rejoin · Hop</p>
+<ol><li><b>Start tool</b> เริ่มเฝ้า/เฝ้าต่อ</li><li><b>Stop tool</b> พักการเฝ้า (ไม่ปิดแอป)</li><li><b>Rejoin all</b> บังคับ rejoin ทุกบัญชี</li><li><b>Add cookies</b> วาง cookie เพิ่มบัญชีจากมือถือ (ครั้งละ ≤10)</li>
+<li><b>Flush Cache</b> ล้างแรม</li><li><b>Safe Mode</b> เช็กช้าลง ปิดรีเฟรช/auto hop (กดซ้ำคืนค่า)</li><li><b>Dump Logs</b> ดาวน์โหลด log</li><li><b>Proxy Switch</b> เปิด/ปิด proxy ทั้งเครื่อง (ตั้งใน Settings, ต้องมี root)</li><li><b>Reboot</b> รีบูตเครื่อง (ถามยืนยัน)</li></ol></div></div><div class='tw'><table><tr><th>แท็บ</th><th>มีอะไร</th></tr><tr><td>Dashboard</td><td>การ์ดทุกเครื่อง · ติ๊กเลือกหลายเครื่องแล้ว Start/Stop/Rejoin พร้อมกัน · ‘เลือกทั้งหมด’ · กางดูบัญชี กด Rejoin/พักรายบัญชี</td></tr><tr><td>Fleet</td><td>ภาพรวมทุกเครื่อง: เครื่องออนไลน์ · บัญชีในเกม · % นิ่ง · rejoin/hop รวม · กราฟย้อนหลัง · แบต/แรม/ping · เพิ่ม/ลบเครื่อง</td></tr><tr><td>Live Feed</td><td>ภาพสดทุกเครื่องเป็นตาราง · แตะเพื่อเต็มจอ ปุ่ม Back/Home/Recents · พิมพ์ข้อความ · เลือกความเร็ว</td></tr><tr><td>Controls</td><td>Rejoin Server · Hop Now · Hop Target · Auto Hop/Hop Every · AutoGrid · กริดล็อก · ค่าการทำงาน · ตารางบัญชี (ติ๊ก/ตั้ง place ทั้งหมด) · log</td></tr><tr><td>Settings</td><td>webhook · proxy · wake-lock · แนบภาพรายงาน · ส่งรายงาน · ล้าง log · ส่งออก CSV · เสียงเตือน · ออกจากระบบ</td></tr></table></div><div class="warn">⚠️ ภาพสดและการแตะจอเปิด/ปิดได้ที่เครื่องลูกเท่านั้น (ตั้งค่า [7]) · ใครมี token ดูและแตะจอได้ ระวังเมื่อใช้ลิงก์ทั่วโลก · โหมดดูอย่างเดียว (ตั้งค่า [6]) กันการสั่งทั้งหมด</div></section><section id="g-central"><h2>เซิร์ฟกลาง (star_central.html)</h2><p>ไฟล์ HTML ไฟล์เดียว วางบนเว็บโฮสต์ใดก็ได้ หรือเปิดจากเครื่องตรง ๆ ก็ได้ ใช้ดู/สั่งหลายเครื่องจากหน้าเดียว โดยเบราว์เซอร์ต่อเข้าแต่ละเครื่องเอง (ไม่ผ่านเครื่องไหนเป็นตัวกลาง)</p>
+<ol><li>เปิดไฟล์ → กด “+ เพิ่มเครื่องรีโมต”</li><li>วางลิงก์ของเครื่องลูกได้เลย (ลิงก์ที่มี <code>#t=token</code> จะดึง token ให้เอง) หรือกรอกที่อยู่ + token แล้วกด ทดสอบ → บันทึก</li><li>หน้าตาและปุ่มเหมือนรีโมตเว็บทุกอย่าง และมีคู่มือนี้ในตัว</li></ol><div class="warn">⚠️ รายการเครื่องและ token เก็บในเบราว์เซอร์ของคุณ (localStorage) ไม่ส่งไปที่ไหน · ถ้าโฮสต์หน้านี้บน https ต้องใช้ลิงก์ https ของเครื่องลูก (ลิงก์ทั่วโลก) เพราะเบราว์เซอร์บล็อก http ในหน้า https · เครื่องลูกต้องใช้ STAR รุ่น 5.6.0 ขึ้นไป (มี CORS)</div></section><section id="g-faq"><h2>แก้ปัญหา</h2><div class='tw'><table><tr><th>อาการ</th><th>แก้ยังไง</th></tr><tr><td>rejoin รัว/วน</td><td>อัปเดตเป็นรุ่นล่าสุด · เช็กว่าไม่มี 2 บัญชีใช้แอปเดียวกัน (โปรแกรมเตือนตอน START) · เครื่องช้าให้ลดจำนวนบัญชีหรือใช้ Phone Boost</td></tr><tr><td>config หายหลังรีบูต</td><td>โปรแกรมกู้จากสำเนาให้เองตอนเปิด (.bak, .last-good, ~/.star) · ถ้ารันสคริปต์จากคนละโฟลเดอร์ จะเสนอกู้จากที่เจอ</td></tr><tr><td>สถานะ DEAD</td><td>cookie ตาย: [2] → เลขบัญชี → [6] วาง cookie ใหม่</td></tr><tr><td>ลิงก์ทั่วโลกเปลี่ยน</td><td>ลิงก์สุ่มเปลี่ยนเมื่ออุโมงค์เริ่มใหม่ · ใช้ Cloudflare/ngrok แบบถาวร (Remote → ตั้งค่า)</td></tr><tr><td>ภาพสดไม่ขึ้น</td><td>ต้องมี root และเปิดภาพสดที่เครื่องลูก (Remote [1] หรือ ตั้งค่า [7]) · ถ้าติดตั้ง Pillow ภาพจะถูกย่อให้เล็กลง</td></tr><tr><td>เข้าเมนู Remote ไม่ได้</td><td>ต้องใส่รหัสผ่านเมนู · ผิด 3 ครั้งเด้งออก</td></tr><tr><td>AFK/กริด ไม่ทำงาน</td><td>ต้องมี root · บางรอมปิดโหมดหน้าต่างอิสระ ดู log ของ AutoGrid</td></tr><tr><td>หยุดจากภายนอก</td><td>สร้างไฟล์ชื่อ STOP ข้างสคริปต์</td></tr></table></div></section></div></template>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fu=s=>{s=Math.floor(s);return s<3600?`${Math.floor(s/60)}m${String(s%60).padStart(2,"0")}s`:s<86400?`${Math.floor(s/3600)}h${String(Math.floor(s%3600/60)).padStart(2,"0")}m`:`${Math.floor(s/86400)}d${Math.floor(s%86400/3600)}h`};
+const ago=s=>s==null?"–":s<60?`${Math.floor(s)} วินาทีที่แล้ว`:s<3600?`${Math.floor(s/60)} นาทีที่แล้ว`:`${Math.floor(s/3600)} ชั่วโมงที่แล้ว`;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const LS={get:(k,d)=>{try{return localStorage.getItem(k)??d}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+
+let GUIDE=(document.getElementById("guideTpl")||{}).innerHTML||"",T="central",tab=LS.get("star_tab","dash"),fleet=[],sel=new Set(),exp=new Set(),cur=LS.get("star_cur",""),hist=[],prev={},snd=false,lvl="all",synced=true,busy=false,fs=null,liveMs=+LS.get("star_ms",800);
+const frames={},fpsT={},lerr={},loops={};
+const SN={WATCH:"อยู่ในเกม",REJOIN:"กำลังกลับ",HOP:"สลับเซิร์ฟ",COOLDOWN:"พักรอบ",DEAD:"cookie ตาย",NET:"เน็ตหลุด",INIT:"เริ่มต้น",OFF:"พัก"};
+const P={play:'<path d="M7 4l13 8-13 8z"/>',stop:'<rect x="6" y="6" width="12" height="12"/>',redo:'<path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/>',cookie:'<circle cx="12" cy="12" r="9"/><path d="M9 10h.01M14 9h.01M10 15h.01M15 14h.01"/>',
+ flush:'<path d="M14 3l7 7M3 21l6-1 8-8-5-5-8 8z"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',term:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+ dash:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+ fleet:'<rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/>',live:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>',
+ ctl:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',set:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>'};
+const ico=n=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[n]}</svg>`;
+const TABS=[["dash","Dashboard","dash"],["fleet","Fleet","fleet"],["live","Live Feed","live"],["ctl","Controls","ctl"],["set","Settings","set"]];
+let DEVS=[];try{DEVS=JSON.parse(LS.get("star_devs","[]"))||[]}catch(e){}
+const saveDevs=()=>LS.set("star_devs",JSON.stringify(DEVS));
+function normDev(u,t){u=String(u||"").trim();const m=u.match(/[#&?]t=([^&\s]+)/);if(m&&!t)t=decodeURIComponent(m[1]);u=u.replace(/[#?].*$/,"").replace(/\/+$/,"");if(u&&!/^https?:\/\//i.test(u))u="http://"+u;return{url:u,token:(t||"").trim()}}
+async function dfetch(d,path,opt,ms){opt=opt||{};const c=new AbortController(),tm=setTimeout(()=>c.abort(),ms||8000);try{return await fetch(d.url+path,{...opt,signal:c.signal,headers:{"X-Star-Token":d.token,"Content-Type":"application/json"}})}finally{clearTimeout(tm)}}
+async function poll(d){const base={id:d.id,name:d.name,local:false,online:false,ms:0,data:null},t0=Date.now();
+ try{const r=await dfetch(d,"/api/state");if(r.status==401)return{...base,error:"token ไม่ถูกต้อง"};if(r.status==429)return{...base,error:"ลองผิดบ่อยเกินไป รอสักครู่"};if(!r.ok)return{...base,error:"HTTP "+r.status};
+  return{...base,online:true,ms:Date.now()-t0,data:await r.json()}}
+ catch(e){return{...base,error:(location.protocol=="https:"&&/^http:/.test(d.url))?"หน้านี้เป็น https — ต้องใช้ลิงก์ https ของเครื่องลูก":"ติดต่อไม่ได้ (เช็กลิงก์/token · เครื่องลูกเปิด Remote อยู่ไหม · ต้องเป็น STAR 5.6.0 ขึ้นไป)"}}}
+async function api(p,b){
+ if(p=="/api/fleet")return{devices:await Promise.all(DEVS.map(poll))};
+ if(p=="/api/cmd"){const{device,...o}=b||{},d=DEVS.find(x=>x.id==device);if(!d)return{ok:false,msg:"ไม่พบเครื่อง"};
+  try{const r=await dfetch(d,"/api/cmd",{method:"POST",body:JSON.stringify({...o,device:"local"})},25000);if(r.status==401)return{ok:false,msg:"token ไม่ถูกต้อง"};return await r.json()}catch(e){return{ok:false,msg:"ติดต่อเครื่องนั้นไม่ได้"}}}
+ if(p=="/api/devices"){const a=b.action;
+  if(a=="remove"){DEVS=DEVS.filter(x=>x.id!=b.id);saveDevs();return{ok:true,msg:"ลบแล้ว"}}
+  const n=normDev(b.url,b.token);if(!n.url)return{ok:false,msg:"ใส่ที่อยู่เครื่อง"};if(!n.token)return{ok:false,msg:"ใส่ token (หรือวางลิงก์ที่มี #t=)"};
+  const r=await poll({id:"t",name:b.name||n.url,url:n.url,token:n.token});
+  if(a=="test")return r.online?{ok:true,msg:`เชื่อมต่อได้ ${r.ms}ms · ${(r.data.accounts||[]).length} บัญชี`}:{ok:false,msg:r.error};
+  if(a=="add"){if(!r.online&&r.error=="token ไม่ถูกต้อง")return{ok:false,msg:r.error};
+   const ex=DEVS.find(x=>x.url==n.url);if(ex){ex.token=n.token;if(b.name)ex.name=b.name}else DEVS.push({id:Math.random().toString(36).slice(2,10),name:(b.name||"").trim()||(r.data&&r.data.name)||n.url,url:n.url,token:n.token});
+   saveDevs();return{ok:true,msg:r.online?"เพิ่มเครื่องแล้ว":"บันทึกไว้ (ตอนนี้ยังติดต่อไม่ได้)"}}}
+ return{ok:false,msg:"ไม่รองรับ"}}
+function gate(on,m){$("#gate").classList.toggle("on",on);$("#gerr").textContent=m||""}
+function toast(m,bad){const e=document.createElement("div");e.className="toast"+(bad?" bad":"");e.textContent=m;$("#toasts").append(e);setTimeout(()=>e.remove(),4200)}
+function beep(){if(!snd)return;try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.frequency.value=660;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.12,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.5);o.start();o.stop(a.currentTime+.5)}catch(e){}}
+const dev=id=>fleet.find(f=>f.id==id),dname=id=>(dev(id)||{}).name||id,online=()=>fleet.filter(f=>f.online&&f.data);
+async function cmd(o,d,quiet){try{const r=await api("/api/cmd",{device:d||cur,...o});if(!quiet)toast(r.msg||"ส่งคำสั่งแล้ว",!r.ok);tick();return r}catch(e){if(e!==0)toast("ส่งคำสั่งไม่สำเร็จ",1)}}
+async function tick(){if(busy||!T)return;busy=true;try{const r=await api("/api/fleet");fleet=r.devices;synced=true;gate(false);alerts();hist.push(online().reduce((a,f)=>a+f.data.accounts.filter(x=>x.state=="WATCH").length,0));if(hist.length>90)hist.shift();if(!editing())render()}catch(e){if(e!==0){synced=false;paintSync()}}busy=false}
+function editing(){const a=document.activeElement;return a&&$("#view").contains(a)&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)&&a.type!="checkbox"}
+function alerts(){fleet.forEach(f=>{if(!f.data)return;f.data.accounts.forEach(x=>{const k=f.id+x.id,o=prev[k];if(o&&o!=x.state){if(["DEAD","COOLDOWN"].includes(x.state)){toast(`${f.name} · ${x.label}: ${SN[x.state]}`,1);beep()}else if(o=="WATCH"&&x.state=="REJOIN")toast(`${f.name} · ${x.label}: หลุดเกม กำลัง rejoin`)}prev[k]=x.state})})}
+async function loadGuide(){if(GUIDE)return;try{const r=await fetch("/api/guide",{headers:{"X-Star-Token":T}});GUIDE=r.ok?await r.text():"<p>โหลดคู่มือไม่ได้ (HTTP "+r.status+")</p>"}catch(e){GUIDE="<p>โหลดคู่มือไม่ได้</p>"}$("#view").dataset.g="";if(tab=="guide")render()}
+function paintSync(){const e=$("#sync");e.className="sync"+(synced?"":" bad");e.textContent=synced?"Synced":"ขาดการเชื่อมต่อ"}
+/* ---------- views ---------- */
+function btn(act,d,label,ic,cls,extra){return `<button class="b ${cls||""}" data-act="${act}" data-dev="${esc(d)}" ${extra||""}>${ic?ico(ic):""}${label}</button>`}
+function accRows(f){return f.data.accounts.map(x=>`<div class="ar"><div><span class="nm">${esc(x.label)}</span><span class="st ${x.state}">${SN[x.state]||x.state}</span></div><div class="sub">${esc(x.app)} · แมพ ${esc(x.place)} · นิ่ง ${Math.round(x.stab)}% · RJ ${x.rejoins} · HP ${x.hops}${x.note?" · "+esc(x.note):""}</div>
+ <div class="ab"><button class="b sm" data-a="kick" data-i="${esc(x.id)}" data-dev="${esc(f.id)}">Rejoin</button><button class="b sm" data-a="${x.paused?"resume":"pause"}" data-i="${esc(x.id)}" data-dev="${esc(f.id)}">${x.paused?"เริ่ม":"พัก"}</button></div></div>`).join("")||`<div class="mu" style="padding:10px 2px;font-size:13px">ยังไม่มีบัญชี</div>`}
+function thumb(f,cls){const d=f.data;
+ if(!d.screen)return `<div class="thumb off"><div>ภาพสดปิดอยู่<br><small>เปิดที่เครื่องลูก: เมนู Remote ข้อ [1]${d.root?"":" (ต้องมี root)"}</small></div></div>`;
+ return `<div class="thumb" data-open="${esc(f.id)}"><img alt="" data-live="${esc(f.id)}" src="${frames[f.id]||""}"><span class="tag">Live</span><span class="fps" data-fps="${esc(f.id)}">FPS: –</span><div class="lerr" data-lerr="${esc(f.id)}"></div></div>`}
+function card(f){const id=esc(f.id);
+ if(!f.online||!f.data)return `<section class="card"><div class="hd"><i class="dot off"></i><h2>${esc(f.name)}</h2><span class="grow"></span><span class="pill r">Offline</span></div><div class="mu" style="font-size:13px">${esc(f.error||"ติดต่อไม่ได้")}</div>${f.local?"":`<div class="btns" style="margin-top:12px"><button class="b" style="grid-column:1/-1" data-act="rmdev" data-dev="${id}">ลบเครื่องนี้</button></div>`}</section>`;
+ const d=f.data,A=d.accounts,w=A.filter(x=>x.state=="WATCH").length,n=A.length,tl=d.tool=="running"?["g","Tool running"]:d.tool=="paused"?["y","Tool paused"]:["r","Tool stopped"];
+ return `<section class="card"><div class="hd"><label class="ck"><input type="checkbox" data-sel="${id}" ${sel.has(f.id)?"checked":""} aria-label="เลือกเครื่อง"></label><i class="dot"></i><h2>${esc(d.name)}</h2><span class="grow"></span><span class="pill ${tl[0]}">${tl[1]}</span><span class="pill b">Online</span></div>
+ ${thumb(f)}
+ <div class="stats"><div><b class="c">${d.session?fu(d.uptime):"–"}</b><span>Active</span></div><div><b>${w}</b><span>Online</span></div><div><b class="w">${n-w}</b><span>Offline</span></div><div><b class="c">${d.totals.rejoins}</b><span>Rejoin</span></div><div><b class="w">${d.totals.hops}</b><span>Hop</span></div></div>
+ <div class="last"><span>Last activity</span><b>${ago(d.last_act)}</b></div>
+ <div class="btns">${btn("start",f.id,"Start tool","play","pri")}${btn("stop",f.id,"Stop tool","stop")}${btn("rejoin",f.id,"Rejoin all","redo")}${btn("cookies",f.id,"Add cookies","cookie")}
+ ${btn("flush",f.id,"Flush Cache","flush","out")}${btn("safe",f.id,"Safe Mode","shield","out"+(d.safe?" on":""))}${btn("logs",f.id,"Dump Logs","term","out")}${btn("proxy",f.id,"Proxy Switch","globe","out"+(d.proxy_on?" on":""))}${btn("reboot",f.id,"Reboot","bolt","red")}</div>
+ <div class="foot"><button class="exp" data-exp="${id}">${exp.has(f.id)?"▾":"▸"} บัญชี (${n})</button><span class="${synced?"ok":"bad"}">${synced?"Synced":"ออฟไลน์"}</span></div>${exp.has(f.id)?accRows(f):""}</section>`}
+function vDash(){return `${online().length>1?`<div class="fr" style="margin-bottom:10px"><button class="b sm" data-bulk="all">เลือกทั้งหมด (${online().length})</button></div>`:""}<div class="cards">${fleet.map(card).join("")||'<div class="empty">ยังไม่มีเครื่อง — กด “+ เพิ่มเครื่องรีโมต” ด้านล่าง</div>'}</div><button class="add" data-act="adddev">+ เพิ่มเครื่องรีโมต</button>`}
+function vFleet(){const on=online(),sum=k=>on.reduce((a,f)=>a+(f.data.totals[k]||0),0);let inG=0,tot=0,u=0,un=0;
+ on.forEach(f=>f.data.accounts.forEach(x=>{tot++;if(x.state=="WATCH")inG++;if(x.state!="OFF"&&x.state!="INIT"){u+=x.stab;un++}}));
+ const mx=Math.max(1,...hist),pts=hist.map((v,i)=>`${i*(300/Math.max(1,hist.length-1))},${44-v/mx*40}`).join(" ");
+ return `<div class="kpis"><div class="kpi"><b>${on.length}/${fleet.length}</b><span>เครื่องออนไลน์</span></div><div class="kpi"><b>${inG}/${tot}</b><span>บัญชีอยู่ในเกม</span></div><div class="kpi"><b>${un?Math.round(u/un):0}%</b><span>นิ่งเฉลี่ย</span></div><div class="kpi"><b>${sum("rejoins")}</b><span>rejoin รวม</span></div><div class="kpi"><b>${sum("hops")}</b><span>hop รวม</span></div>
+ <div class="kpi"><svg class="spark" viewBox="0 0 300 46" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="var(--cy)" stroke-width="1.8" vector-effect="non-scaling-stroke"/></svg><span>บัญชีในเกมย้อนหลัง</span></div></div>
+ <div class="card">${fleet.map(f=>{const d=f.data,s=d?d.accounts.filter(x=>x.state=="WATCH").length:0,rp=d&&d.ram.total?Math.round(100-d.ram.free/d.ram.total*100):0;
+  return `<div class="row"><i class="dot ${f.online?"":"off"}"></i><div style="flex:1;min-width:0"><div class="nm">${esc(f.name)}</div><div class="sub">${f.online?`${s}/${d.accounts.length} ในเกม · ${f.local?"เครื่องนี้":f.ms+"ms"}${d.battery!=null?` · แบต ${d.battery}%${d.charging?" ⚡":""}`:""} · แรม ${rp}%`:esc(f.error||"ออฟไลน์")}</div>${f.online?`<div class="bar"><i style="width:${rp}%;${rp>85?"background:var(--bad)":""}"></i></div>`:""}</div>
+  <button class="b sm" data-act="goto" data-dev="${esc(f.id)}">เปิด</button>${f.local?"":`<button class="b sm" data-act="rmdev" data-dev="${esc(f.id)}">ลบ</button>`}</div>`}).join("")}</div><button class="add" data-act="adddev">+ เพิ่มเครื่องรีโมต</button>`}
+function vLive(){const L=fleet.filter(f=>f.online&&f.data);
+ return `<div class="fr" style="margin-bottom:12px"><h3 style="margin:0;flex:1">Live Feed (${L.filter(f=>f.data.screen).length}/${L.length})</h3><select id="lrate" style="width:auto">${[[400,"เร็ว"],[800,"ปกติ"],[2000,"ประหยัด"]].map(v=>`<option value="${v[0]}" ${v[0]==liveMs?"selected":""}>${v[1]}</option>`).join("")}</select></div>
+ <div class="grid2">${L.map(f=>f.data.screen?`<div class="tile" data-open="${esc(f.id)}"><img alt="" data-live="${esc(f.id)}" src="${frames[f.id]||""}"><span class="tag">${esc(f.name)}</span><span class="fps" data-fps="${esc(f.id)}">FPS: –</span><div class="lerr" data-lerr="${esc(f.id)}"></div></div>`:`<div class="tile" style="cursor:default"><div class="ph">${esc(f.name)}<br>ภาพสดปิดอยู่<br>เปิดที่เครื่องลูก: Remote [1]</div></div>`).join("")||'<div class="empty" style="grid-column:1/-1">ยังไม่มีเครื่องออนไลน์</div>'}</div>`}
+function devSel(){const L=online();if(!L.find(f=>f.id==cur)&&L[0])cur=L[0].id;return `<select id="curdev" style="margin-bottom:14px">${L.map(f=>`<option value="${esc(f.id)}" ${f.id==cur?"selected":""}>${esc(f.name)}</option>`).join("")}</select>`}
+function vCtl(){devSel();const f=dev(cur);if(!f||!f.data)return devSel()+'<div class="empty">ไม่มีเครื่องออนไลน์</div>';const d=f.data,c=d.cfg||{},t=c.hop_target||"random",g=d.grid||{};
+ const F=[["poll","เช็กทุก (วินาที)",c.poll],["restart_min","รีเฟรชแอปทุก (นาที · 0=ปิด)",c.restart_min],["trim_min","ล้างแคชทุก (นาที · 0=ปิด)",c.trim_min],["report_min","รายงาน Discord ทุก (นาที)",c.report_min]];
+ const L=(d.logs||[]).filter(l=>lvl=="all"||(lvl=="warn"&&["warn","err"].includes(l.lv))||l.lv==lvl);
+ return `${devSel()}<div class="card"><h3>เซิร์ฟเวอร์</h3><div class="btns">${btn("rejoin",cur,"Rejoin Server","redo","pri")}${btn("hop_now",cur,"Hop Now","redo")}</div>
+ <label class="f">Hop Target</label><div class="seg">${[["random","Random"],["least","Least"],["popular","Most Popular"]].map(x=>`<button class="b ${t==x[0]?"pri":""}" data-ht="${x[0]}">${x[1]}</button>`).join("")}</div>
+ <div class="sw"><span>Auto Server Hop</span><input type="checkbox" id="ah" ${c.auto_hop?"checked":""}></div><label class="f">Hop Every <b id="hev">${c.hop_every||10}</b> นาที</label><input type="range" id="he" min="1" max="120" value="${c.hop_every||10}"></div>
+ ${(()=>{const ag=d.autogrid||{};return `<div class="card"><div class="fr" style="margin-bottom:6px"><h3 style="margin:0;flex:1">AutoGrid</h3><span class="pill ${ag.on?"g":"r"}">${ag.on?"Running":"Stopped"}</span></div>
+ <div class="mu" style="font-size:12px;margin-bottom:6px">จัดหน้าต่างโคลนเป็นกริดให้เอง เปิด/ปิดแอปเพิ่มก็จัดใหม่ทันที${d.root?"":" · ต้องมี root"}</div>
+ <div class="grid2"><div><label class="f" for="ag_p">pattern ชื่อแอป</label><input type="text" id="ag_p" value="${esc(ag.pattern||"roblox")}"></div><div><label class="f" for="ag_c">คอลัมน์ (0 = auto)</label><input type="number" id="ag_c" min="0" max="8" value="${ag.cols??0}"></div>
+ <div><label class="f" for="ag_i">ตรวจทุก (วินาที)</label><input type="number" id="ag_i" min="1" max="60" value="${ag.interval??3}"></div><div><label class="f" for="ag_m">margin (px)</label><input type="number" id="ag_m" min="0" max="100" value="${ag.margin??0}"></div></div>
+ <div class="btns" style="margin-top:12px"><button class="b pri" data-ag="start" ${d.root?"":"disabled"}>${ag.on?"เริ่มใหม่":"Start"}</button><button class="b" data-ag="stop" ${d.root?"":"disabled"}>Stop</button></div>
+ ${(ag.log||[]).length?`<div class="log" style="height:auto;max-height:110px;margin-top:12px">${ag.log.map(l=>`<div class="dim">${esc(l)}</div>`).join("")}</div>`:""}</div>`})()}
+ <div class="card"><h3>กริดแบบล็อก · ${g.locked?`ล็อกอยู่ ${g.n} ช่อง`:"ไม่ล็อก"}</h3><div class="mu" style="font-size:12px;margin-bottom:10px">เปิดแอปตามตำแหน่งแล้วดึงกลับถ้าถูกขยับ · ใช้ทีละแบบกับ AutoGrid (เปิดอันหนึ่งอีกอันจะหยุดให้)</div><div class="btns"><button class="b out" data-c="grid_arrange">จัดกริดใหม่</button><button class="b" data-c="grid_lock">ล็อก</button><button class="b" data-c="grid_unlock" style="grid-column:1/-1">ปลดล็อก</button></div></div>
+ <div class="card"><h3>ค่าการทำงาน</h3>${F.map(x=>`<label class="f">${x[1]}</label><div class="fr"><input type="number" id="cf_${x[0]}" value="${x[2]??""}"><button class="b sm" data-k="${x[0]}">บันทึก</button></div>`).join("")}</div>
+ <div class="card"><h3>บัญชี</h3><div class="tw"><table><tr><th>บัญชี</th><th>hop<br><input type="checkbox" data-all="hop" ${d.accounts.every(x=>x.hop)?"checked":""} aria-label="hop ทั้งหมด"></th><th>เฝ้า<br><input type="checkbox" data-all="enabled" ${d.accounts.every(x=>x.enabled)?"checked":""} aria-label="เฝ้าทั้งหมด"></th><th>place id<br><div class="fr"><input type="text" inputmode="numeric" id="pall" placeholder="ทั้งหมด" style="width:110px"><button class="b sm" id="pallb">ตั้งทั้งหมด</button></div></th></tr>${d.accounts.map(x=>`<tr><td><b>${esc(x.label)}</b></td><td><input type="checkbox" data-t="hop" data-i="${esc(x.id)}" ${x.hop?"checked":""}></td><td><input type="checkbox" data-t="enabled" data-i="${esc(x.id)}" ${x.enabled?"checked":""}></td><td><div class="fr"><input type="text" inputmode="numeric" data-p="${esc(x.id)}" value="${esc(x.place)}" style="width:110px"><button class="b sm" data-pi="${esc(x.id)}">ตั้ง</button></div></td></tr>`).join("")}</table></div></div>
+ <div class="card"><div class="fr" style="margin-bottom:10px"><h3 style="margin:0;flex:1">บันทึกเหตุการณ์</h3><select id="lv" style="width:auto">${[["all","ทั้งหมด"],["warn","เตือน+"],["err","ผิดพลาด"]].map(v=>`<option value="${v[0]}" ${lvl==v[0]?"selected":""}>${v[1]}</option>`).join("")}</select></div>
+ <div class="log" id="log">${L.map(l=>`<div><span class="t">${esc(l.ts)}</span> <span class="${esc(l.lv)}">${esc(l.tag)}</span> ${esc(l.msg)}</div>`).join("")||'<div class="dim">ยังไม่มีเหตุการณ์</div>'}</div></div>`}
+function vSet(){devSel();const f=dev(cur);const d=f&&f.data;
+ let h=devSel();
+ if(d){const c=d.cfg||{};h+=`<div class="card"><h3>เครื่อง: ${esc(d.name)} <span class="mu" style="font-size:12px">v${esc(d.version)} · ${d.root?"root":"ไม่มี root"}${d.readonly?" · ดูอย่างเดียว":""}</span></h3>
+ ${d.public&&f.local?`<div class="fr" style="margin-bottom:10px"><code class="mu" style="font-size:12px;word-break:break-all;flex:1">${esc(d.public)}</code><button class="b sm" id="cp" data-u="${esc(d.public)}">คัดลอกลิงก์</button></div>`:""}
+ <label class="f">Discord webhook</label><div class="fr"><input type="text" id="cf_webhook" placeholder="https://..."><button class="b sm" id="cf_wh">บันทึก</button></div>
+ <label class="f">Proxy ทั้งเครื่อง (host:port · ใช้กับปุ่ม Proxy Switch · ต้องมี root)</label><div class="fr"><input type="text" id="cf_proxy" value="${esc(c.proxy||"")}" placeholder="1.2.3.4:8080"><button class="b sm" data-k="proxy">บันทึก</button></div>
+ <div class="sw"><span>wake-lock</span><input type="checkbox" id="cf_wake" ${c.wake?"checked":""}></div><div class="sw"><span>แนบภาพหน้าจอในรายงาน Discord</span><input type="checkbox" id="cf_shot" ${c.report_shot?"checked":""}></div>
+ <div class="btns" style="margin-top:12px">${btn("report",cur,"ส่งรายงาน Discord","","out")}${btn("clear_log",cur,"ล้าง log","")}${btn("csv",cur,"ส่งออก CSV","")}</div></div>`}
+ h+=`<div class="card"><h3>แอปนี้ (เบราว์เซอร์)</h3><div class="sw"><span>เสียงเตือน (cookie ตาย / พักรอบ)</span><input type="checkbox" id="snd" ${snd?"checked":""}></div><div class="btns" style="margin-top:12px"><button class="b" id="out" style="grid-column:1/-1">ล้างรายการเครื่อง</button></div></div>
+ <div class="card mu" style="font-size:12px">ภาพสดและการแตะจอ เปิด/ปิดได้ที่เครื่องลูกเท่านั้น (เมนู Remote ข้อ [1] หรือ [s]) · Stop tool = พักการเฝ้า แอปที่เปิดอยู่ไม่ถูกปิด</div>`;return h}
+function render(){paintSync();$("#nav").innerHTML=TABS.map(t=>`<button class="${tab==t[0]?"on":""}" data-tab="${t[0]}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[t[2]]}</svg>${t[1]}</button>`).join("");
+ const v=$("#view");$("#gbtn").textContent=tab=="guide"?"← กลับ":"คู่มือ";
+ if(tab=="guide"){$("#bulkbar").innerHTML="";syncLive();if(v.dataset.g!="1"){v.innerHTML=GUIDE||'<div class="empty">กำลังโหลดคู่มือ...</div>';v.dataset.g=GUIDE?"1":"";if(!GUIDE)loadGuide()}return}
+ v.dataset.g="";v.innerHTML=tab=="dash"?vDash():tab=="fleet"?vFleet():tab=="live"?vLive():tab=="ctl"?vCtl():vSet();
+ const lg=$("#log");if(lg)lg.scrollTop=lg.scrollHeight;
+ [...sel].forEach(i=>{if(!dev(i)||!dev(i).online)sel.delete(i)});
+ $("#bulkbar").innerHTML=sel.size&&tab=="dash"?`<div class="bulk"><span>เลือก ${sel.size} เครื่อง</span><button class="b sm" data-bulk="all">ทั้งหมด</button><button class="b sm pri" data-bulk="start">Start</button><button class="b sm" data-bulk="stop">Stop</button><button class="b sm" data-bulk="rejoin">Rejoin</button><button class="b sm" data-bulk="clear">ล้าง</button></div>`:"";
+ syncLive();[...Object.keys(loops)].forEach(paintLive)}
+/* ---------- live ---------- */
+function wantLive(){const m={};if(!T||document.hidden)return m;if(fs){m[fs]=720;return m}if(tab=="dash"||tab=="live")online().filter(f=>f.data.screen).forEach(f=>m[f.id]=tab=="live"?420:360);return m}
+function syncLive(){const w=wantLive();for(const id in loops)if(!(id in w)){loops[id].stop=true;delete loops[id]}for(const id in w){if(loops[id]){loops[id].w=w[id];continue}const L={stop:false,w:w[id]};loops[id]=L;runLoop(id,L)}}
+function tickFps(id){const a=fpsT[id]=(fpsT[id]||[]).concat(Date.now()).slice(-6);return a.length>1?((a.length-1)/((a[a.length-1]-a[0])/1000)).toFixed(1):"–"}
+function paintLive(id){const a=fpsT[id]||[],fps=a.length>1&&Date.now()-a[a.length-1]<5000?((a.length-1)/((a[a.length-1]-a[0])/1000)).toFixed(1):"–";
+ $$(`[data-fps="${id}"]`).forEach(e=>e.textContent="FPS: "+fps);if(fs==id)$("#fsf").textContent="FPS: "+fps;
+ $$(`[data-lerr="${id}"]`).forEach(e=>{e.textContent=lerr[id]||"";e.style.display=lerr[id]?"block":"none"});if(fs==id)$("#fsm").textContent=lerr[id]||""}
+async function runLoop(id,L){while(!L.stop){const t0=Date.now();
+ try{const r=await dfetch(DEVS.find(x=>x.id==id)||{url:"",token:""},`/api/screen?w=${L.w}&t=${t0}`,{},12000);if(L.stop)break;
+  if(r.ok){const u=URL.createObjectURL(await r.blob()),o=frames[id];frames[id]=u;$$(`[data-live="${id}"]`).forEach(im=>im.src=u);if(fs==id)$("#fsimg").src=u;if(o)setTimeout(()=>URL.revokeObjectURL(o),2000);lerr[id]="";tickFps(id)}
+  else{const j=await r.json().catch(()=>({}));lerr[id]=j.error||("HTTP "+r.status)}}catch(e){lerr[id]="ติดต่อไม่ได้"}
+ paintLive(id);await sleep(Math.max(150,(fs==id?Math.min(liveMs,600):liveMs)-(Date.now()-t0)))}}
+async function lvs(b){try{const r=await api("/api/cmd",{device:fs,...b});if(!r.ok)toast(r.msg,1)}catch(e){}}
+/* ---------- sheets ---------- */
+function openSheet(h){$("#shc").innerHTML=h;$("#sh").classList.add("on")}function closeSheet(){$("#sh").classList.remove("on")}
+function openCookies(d){openSheet(`<h2>Add cookies</h2><div class="mu" style="font-size:13px">เครื่อง ${esc(dname(d))} · บรรทัดละตัว ใส่ <b>ชื่อ|cookie</b> หรือวาง cookie เปล่า ๆ ได้ (ครั้งละไม่เกิน 10)</div><label class="f" for="ck">cookie</label><textarea id="ck" autocomplete="off" spellcheck="false" placeholder="ชื่อ|_|WARNING:-DO-NOT-SHARE-THIS..."></textarea>
+ <div class="mu" style="font-size:12px;margin-top:6px">cookie = กุญแจเข้าบัญชี ใช้ผ่านลิงก์ https เท่านั้น อย่าส่งต่อใคร</div><div class="r"><button class="b" id="sx">ยกเลิก</button><button class="b pri" id="sok" data-dev="${esc(d)}">เพิ่ม</button></div>`)}
+function openDev(){openSheet(`<h2>เพิ่มเครื่องรีโมต</h2><div class="mu" style="font-size:13px">เครื่องปลายทางต้องเปิด Remote Device และเข้าถึงกันได้ (วงเดียวกัน / ลิงก์ทั่วโลก / Tailscale)</div>
+ <label class="f" for="dn">ชื่อเครื่อง</label><input type="text" id="dn" placeholder="เช่น Phone-02"><label class="f" for="du">ที่อยู่</label><input type="text" id="du" placeholder="192.168.1.50:8787 หรือวางลิงก์ที่มี #t=token"><label class="f" for="dt">Token ของเครื่องนั้น</label><input type="password" id="dt"><div class="mu" id="derr" style="font-size:13px;margin-top:8px"></div>
+ <div class="r"><button class="b" id="sx">ยกเลิก</button><button class="b" id="dtest">ทดสอบ</button><button class="b pri" id="dsave">บันทึก</button></div>`)}
+const dv=()=>({name:$("#dn").value.trim(),url:$("#du").value.trim(),token:$("#dt").value.trim()});
+function openFs(id){fs=id;$("#fsn").textContent=dname(id);$("#fsimg").src=frames[id]||"";$("#fsm").textContent="";$("#fs").classList.add("on");syncLive()}
+function closeFs(){fs=null;$("#fs").classList.remove("on");syncLive()}
+async function dumpLogs(d){try{const r=await dfetch(DEVS.find(x=>x.id==d),"/api/logs",{},15000);if(!r.ok){toast("ดึง log ไม่ได้",1);return}const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());a.download=`star_${dname(d)}_${new Date().toISOString().slice(0,16).replace(/[:T]/g,"-")}.log`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast("ดาวน์โหลด log แล้ว")}catch(e){toast("ดึง log ไม่ได้",1)}}
+function csv(d){const f=dev(d);if(!f||!f.data)return;const r=[["account","state","app","place","stab","rejoins","hops","note"],...f.data.accounts.map(x=>[x.label,x.state,x.app,x.place,Math.round(x.stab),x.rejoins,x.hops,x.note])];
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+r.map(z=>z.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n")],{type:"text/csv"}));a.download=`star_${f.data.name}.csv`;a.click()}
+const ACT={start:d=>cmd({cmd:"start"},d),stop:d=>cmd({cmd:"pause_all"},d),rejoin:d=>cmd({cmd:"kick_all"},d),flush:d=>cmd({cmd:"free_ram"},d),safe:d=>cmd({cmd:"safe_mode"},d),proxy:d=>cmd({cmd:"proxy_switch"},d),
+ logs:dumpLogs,cookies:openCookies,adddev:openDev,hop_now:d=>cmd({cmd:"hop_now"},d),report:d=>cmd({cmd:"report"},d),clear_log:d=>cmd({cmd:"clear_log"},d),csv,
+ goto:d=>{tab="dash";LS.set("star_tab",tab);render();setTimeout(()=>{const i=fleet.findIndex(f=>f.id==d);const c=$$("#view .card")[i];if(c)c.scrollIntoView({behavior:"smooth"})},50)},
+ reboot:d=>{if(confirm(`รีบูตเครื่อง "${dname(d)}" ?\nทุกบัญชีจะหลุดจนกว่าเครื่องจะกลับมา และต้องเปิด Termux/START ใหม่`))cmd({cmd:"reboot",confirm:true},d)},
+ rmdev:async d=>{if(!confirm(`ลบเครื่อง "${dname(d)}" ออกจากรายการ?`))return;await api("/api/devices",{action:"remove",id:d});tick()}};
+/* ---------- events ---------- */
+document.addEventListener("click",async e=>{const t=e.target,c=n=>t.closest(n);let x;
+ if(x=c("[data-g]")){const e=document.getElementById(x.dataset.g);if(e)e.scrollIntoView({behavior:"smooth"});return}
+ if(c("#gbtn")){if(tab=="guide")tab=LS.get("star_prev","dash");else{LS.set("star_prev",tab);tab="guide"}render();scrollTo(0,0);return}
+ if(x=c("[data-tab]")){tab=x.dataset.tab;LS.set("star_tab",tab);render();scrollTo(0,0);return}
+ if(x=c("[data-act]")){const f=ACT[x.dataset.act];if(f)f(x.dataset.dev);return}
+ if(x=c("[data-a]")){cmd({cmd:x.dataset.a,id:x.dataset.i},x.dataset.dev);return}
+ if(x=c("[data-exp]")){const i=x.dataset.exp;exp.has(i)?exp.delete(i):exp.add(i);render();return}
+ if(x=c("[data-open]")){openFs(x.dataset.open);return}
+ if(x=c("[data-bulk]")){const k=x.dataset.bulk;if(k=="clear"){sel.clear();render();return}if(k=="all"){online().forEach(f=>sel.add(f.id));render();return}const o={start:{cmd:"start"},stop:{cmd:"pause_all"},rejoin:{cmd:"kick_all"}}[k];await Promise.all([...sel].map(i=>cmd(o,i,1)));toast(`สั่ง ${k} ${sel.size} เครื่องแล้ว`);return}
+ if(x=c("[data-ag]")){if(x.dataset.ag=="stop"){cmd({cmd:"autogrid_stop"});return}cmd({cmd:"autogrid_start",pattern:$("#ag_p").value.trim(),cols:+$("#ag_c").value,interval:+$("#ag_i").value,margin:+$("#ag_m").value});return}
+ if(x=c("[data-c]")){cmd({cmd:x.dataset.c});return}
+ if(x=c("[data-ht]")){cmd({cmd:"set_cfg",key:"hop_target",value:x.dataset.ht});return}
+ if(x=c("[data-k]")){cmd({cmd:"set_cfg",key:x.dataset.k,value:$("#cf_"+x.dataset.k).value});return}
+ if(x=c("[data-pi]")){cmd({cmd:"acc_set",id:x.dataset.pi,field:"place_id",value:document.querySelector(`[data-p="${x.dataset.pi}"]`).value.trim()});return}
+ if(c("#pallb")){const v=$("#pall").value.trim(),f=dev(cur);if(!/^\d+$/.test(v)||!f||!f.data){toast("place id ต้องเป็นตัวเลข",1);return}Promise.all(f.data.accounts.map(a=>cmd({cmd:"acc_set",id:a.id,field:"place_id",value:v},cur,1))).then(()=>toast(`ตั้ง place ${v} ให้ทุกบัญชีแล้ว`));return}
+ if(c("#cf_wh")){cmd({cmd:"set_cfg",key:"webhook",value:$("#cf_webhook").value.trim()});return}
+ if(x=c("#cp")){navigator.clipboard.writeText(x.dataset.u+"/#t="+encodeURIComponent(T)).then(()=>toast("คัดลอกลิงก์แล้ว (มี token อย่าแชร์ต่อ)"));return}
+ if(c("#sx")){closeSheet();return}
+ if(x=c("#sok")){const txt=$("#ck").value;if(!txt.trim())return;x.disabled=true;const r=await cmd({cmd:"add_cookie",text:txt},x.dataset.dev);if(r&&r.ok)closeSheet();else x.disabled=false;return}
+ if(c("#dtest")){const r=await api("/api/devices",{action:"test",...dv()});$("#derr").className=r.ok?"ok":"bad";$("#derr").textContent=r.msg;return}
+ if(c("#dsave")){const r=await api("/api/devices",{action:"add",...dv()});if(r.ok){closeSheet();toast(r.msg);tick()}else{$("#derr").className="bad";$("#derr").textContent=r.msg}return}
+ if(c("#fsx")){closeFs();return}
+ if(x=c("[data-key]")){lvs({cmd:"input",kind:"key",key:x.dataset.key});return}
+ if(c("#fss")&&$("#fst").value){lvs({cmd:"input",kind:"text",text:$("#fst").value});$("#fst").value="";return}
+ if(c("#out")){if(confirm("ล้างรายการเครื่องทั้งหมดในเบราว์เซอร์นี้?")){DEVS=[];saveDevs();fleet=[];tick()}return}
+ if(c("#login")){T=$("#tk").value.trim();LS.set("star_t",T);tick();return}
+ if(t.id=="sh"){closeSheet()}});
+document.addEventListener("change",e=>{const t=e.target;
+ if(t.dataset.sel){t.checked?sel.add(t.dataset.sel):sel.delete(t.dataset.sel);render();return}
+ if(t.dataset.t){cmd({cmd:"acc_set",id:t.dataset.i,field:t.dataset.t,value:t.checked});return}
+ if(t.dataset.all){const f=dev(cur);if(!f||!f.data)return;Promise.all(f.data.accounts.map(x=>cmd({cmd:"acc_set",id:x.id,field:t.dataset.all,value:t.checked},cur,1))).then(()=>toast(`ตั้ง ${t.dataset.all} ทั้งหมดแล้ว`));return}
+ if(t.id=="curdev"){cur=t.value;LS.set("star_cur",cur);render();return}
+ if(t.id=="ah"){cmd({cmd:"set_cfg",key:"auto_hop",value:t.checked});return}
+ if(t.id=="he"){cmd({cmd:"set_cfg",key:"hop_every",value:+t.value});return}
+ if(t.id=="cf_wake"){cmd({cmd:"set_cfg",key:"wake",value:t.checked});return}
+ if(t.id=="cf_shot"){cmd({cmd:"set_cfg",key:"report_shot",value:t.checked});return}
+ if(t.id=="snd"){snd=t.checked;if(snd)beep();return}
+ if(t.id=="lv"){lvl=t.value;render();return}
+ if(t.id=="lrate"){liveMs=+t.value;LS.set("star_ms",liveMs);return}});
+document.addEventListener("input",e=>{if(e.target.id=="he")$("#hev").textContent=e.target.value});
+$("#tk").onkeydown=e=>{if(e.key=="Enter")$("#login").click()};
+document.addEventListener("visibilitychange",syncLive);
+let pd=null;const li=$("#fsimg");
+li.addEventListener("pointerdown",e=>{pd={x:e.clientX,y:e.clientY,t:Date.now()};e.preventDefault()});
+li.addEventListener("pointerup",e=>{if(!pd)return;const r=li.getBoundingClientRect(),f=(x,y)=>[(x-r.left)/r.width,(y-r.top)/r.height],a=f(pd.x,pd.y),b=f(e.clientX,e.clientY),mv=Math.hypot(e.clientX-pd.x,e.clientY-pd.y);
+ lvs(mv<12?{cmd:"input",kind:"tap",x:a[0],y:a[1]}:{cmd:"input",kind:"swipe",x:a[0],y:a[1],x2:b[0],y2:b[1],ms:Math.min(800,Date.now()-pd.t+80)});pd=null});
+render();tick();if(!DEVS.length)openDev();setInterval(()=>{if(T&&!document.hidden)tick()},3000);
+</script></body></html>
